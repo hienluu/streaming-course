@@ -3,11 +3,20 @@
 # To bring up the cluster
   docker-compose -f streaming-cluster.yml up -d
 
+# To examine the container processed
+  docker ps | grep kafka
+
 # To view the Kafka UI
   point your browser to http://localhost:9000
 
 #Check if the containers are up and running
   docker ps
+
+# list topics
+  kafka-topics.sh --zookeeper zookeeper:2181 --list
+
+# describe a topic
+  kafka-topics.sh --zookeeper zookeeper:2181 --topic <topic name> --describe
 
 # To bring down the cluster
   docker-compose -f streaming-cluster.yml down

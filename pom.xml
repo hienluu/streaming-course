@@ -4,9 +4,9 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>my.course</groupId>
+  <groupId>my.learning</groupId>
   <artifactId>streaming-course</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
 
   <name>Project for streaming-course</name>

@@ -3,16 +3,23 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <packaging>jar</packaging>
 
     <parent>
-        <groupId>my.course</groupId>
+        <groupId>my.learning</groupId>
         <artifactId>streaming-course</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>my.course</groupId>
+    <groupId>my.learning</groupId>
     <artifactId>week1</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-
+    <dependencies>
+        <!-- kafka -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.13</artifactId>
+        </dependency>
+    </dependencies>
 </project>

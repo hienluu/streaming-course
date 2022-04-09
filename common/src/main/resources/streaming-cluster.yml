@@ -72,7 +72,7 @@ services:
       - KAFKA_BROKERCONNECT=kafka1:29092,kafka2:29093,kafka3:29094
       - JVM_OPTS=-Xms32M -Xmx64M
       - SERVER_SERVLET_CONTEXTPATH=/
-    container_name: kafdrop
+    container_name: kafka-drop
     depends_on:
       - "kafka1"
       - "kafka2"

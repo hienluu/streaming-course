@@ -1,0 +1,14 @@
+# log into one of the kafka brokers using container name
+docker exec -it kafka-broker1 bash
+
+# consume Kafka message from beginning of topic from all partitions
+# kafka1:29092,kafka2:29093,kafka3:29094 are based on the service name (when running from inside a container)
+kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic <topic name> --from-beginning
+
+# type ctrl-c to stop consuming messages
+
+# consume Kafka message from beginning of topic from a specific partition
+kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic <topic name> --partition <partition no> --from-beginning
+
+# type ctrl-c to stop consuming messages
+
