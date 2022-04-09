@@ -1,0 +1,19 @@
+
+
+# To bring up the cluster
+  docker-compose -f streaming-cluster.yml up -d
+
+# To view the Kafka UI
+  point your browser to http://localhost:9000
+
+#Check if the containers are up and running
+  docker ps
+
+# To bring down the cluster
+  docker-compose -f streaming-cluster.yml down
+
+# Stop a broker
+  docker container stop [kafka-broker1|kafka-broker2|kafka-broker3]
+
+# Start a broker
+  docker container start [kafka-broker1|kafka-broker2|kafka-broker3]
