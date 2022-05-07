@@ -37,14 +37,16 @@ public class KafkaTweetProducer {
         kafkaProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KAFKA_STRING_SERIALIZER);
 
         //Create a Kafka producer from configuration
-        KafkaProducer simpleProducer = new KafkaProducer(kafkaProps);
+        KafkaProducer<String, String> simpleProducer = new KafkaProducer<String, String>(kafkaProps);
 
         //Publish NUM_MSGS_TO_SEND messages at SLEEP_TIME_IN_MS second intervals, with a random key
         try{
             int startKey = (new Random()).nextInt(100) ;
-
+            System.out.println("startKey: " + startKey);
+            System.out.println("NUM_MSGS_TO_SEND: " + NUM_MSGS_TO_SEND);
             System.out.println("... sleeping time in MS: " + SLEEP_TIME_IN_MS);
-            for( int i=startKey; i < startKey + NUM_MSGS_TO_SEND; i++) {
+
+            for( int i=startKey; i <= startKey + NUM_MSGS_TO_SEND; i++) {
 
                 //Create a producer Record
                 ProducerRecord<String, String> kafkaRecord =

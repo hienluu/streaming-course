@@ -1,0 +1,18 @@
+tasks:
+  - init: mvn install -DskipTests=false
+
+
+ports:
+  - port: 9000
+    onOpen: open-preview
+
+
+vscode:
+  extensions:
+    - redhat.java
+    - vscjava.vscode-java-debug
+    - vscjava.vscode-java-test
+    - vscjava.vscode-java-dependency
+    - vscjava.vscode-java-pack
+    - vscjava.vscode-maven
+    - pivotal.vscode-spring-boot

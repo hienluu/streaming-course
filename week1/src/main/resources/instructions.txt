@@ -1,14 +1,51 @@
+============================================================
+ Week 1 instructions
+============================================================
+# bring up the kafka cluster (see the instructions in the common module)
+
+# Create a kafka topic using Kafdrop UI
+- from the main Kafdrop page, click on the "+New" button at the bottom of the page
+- fill in the value of each of the 3 fields
+  - name: streaming.week1.tweets
+  - # of partitions: 2
+  - replication factor: 3
+- then click on "+Create" button at the bottom of the form
+- then click "Back" button
+- the "week1" topic should appear under the Topics section
+
+
+# now go back to the gitpod browser window
 # log into one of the kafka brokers using container name
 docker exec -it kafka-broker1 bash
 
+# list topics
+kafka-topics.sh --zookeeper zookeeper:2181 --list
+
+# describe a topic to see # of partitions and replicas
+kafka-topics.sh --zookeeper zookeeper:2181 --topic week1 --describe
+
+# run the KafkaTweetProducer java file to produce simple tweet messages to "streaming.week1.tweets" topic
+- click on the "Explorer" icon on the left sidebar, expand week1/src/main folder
+- click on KafkaTweetProducer.java
+- click on the "Run Java" icon
+- should see messages in the terminal
+
+# to view and consume messages from "streaming.week1.tweets" topic
+- via Kafdrop UI
+  - from the main webpage click on the "streaming.week1.tweets" topic at the bottom
+  - click on the "View Messages" button at the top
+  - click on the "View Messages" button to see the top 100 messages from partition 0
+  - change the partition from 0 to 1 and click on the "View Messages" button to see messages
+
+- via terminal
 # consume Kafka message from beginning of topic from all partitions
 # kafka1:29092,kafka2:29093,kafka3:29094 are based on the service name (when running from inside a container)
-kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic <topic name> --from-beginning
+kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic streaming.week1.tweets --from-beginning
 
 # type ctrl-c to stop consuming messages
 
 # consume Kafka message from beginning of topic from a specific partition
-kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic <topic name> --partition <partition no> --from-beginning
+kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic streaming.week1.tweets --partition 0 --from-beginning
 
 # type ctrl-c to stop consuming messages
 

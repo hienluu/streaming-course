@@ -1,22 +1,25 @@
-
+# in a terminal
+  - either locally or the terminal tab at the bottom of gitpod
 
 # To bring up the cluster
-  docker-compose -f streaming-cluster.yml up -d
+  docker-compose -f ./common/src/main/resources/streaming-cluster.yml up -d
 
-# To examine the container processed
+# Check if the containers are up and running
+  docker ps
+
+# list the kafka broker containers
   docker ps | grep kafka
 
 # To view the Kafka UI
-  point your browser to http://localhost:9000
+  - when running locally on your laptop
+    point your browser to http://localhost:9000
 
-#Check if the containers are up and running
-  docker ps
+  - when running in gitpod
+    - click on the remote explorer icon
+    - mouse over port 9000  and mouse over the "open browser icon" then click it
+      - might need to enable your browser to allow pop-up from gitpod.io
 
-# list topics
-  kafka-topics.sh --zookeeper zookeeper:2181 --list
-
-# describe a topic
-  kafka-topics.sh --zookeeper zookeeper:2181 --topic <topic name> --describe
+# now refer to the specific instructions for each specific week
 
 # To bring down the cluster
   docker-compose -f streaming-cluster.yml down
@@ -26,3 +29,15 @@
 
 # Start a broker
   docker container start [kafka-broker1|kafka-broker2|kafka-broker3]
+
+
+============================================================
+ a list useful commands
+============================================================
+
+# list topics
+kafka-topics.sh --zookeeper zookeeper:2181 --list
+
+# describe a topic
+kafka-topics.sh --zookeeper zookeeper:2181 --topic <topic name> --describe
+
