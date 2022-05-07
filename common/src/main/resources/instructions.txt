@@ -22,7 +22,7 @@
 # now refer to the specific instructions for each specific week
 
 # To bring down the cluster
-  docker-compose -f streaming-cluster.yml down
+  docker-compose -f ./common/src/main/resources/streaming-cluster.yml down
 
 # Stop a broker
   docker container stop [kafka-broker1|kafka-broker2|kafka-broker3]

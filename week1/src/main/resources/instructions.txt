@@ -49,3 +49,9 @@ kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29
 
 # type ctrl-c to stop consuming messages
 
+# exit out docker container in the terminal
+- enter "exit" command and hit enter
+- should see prompt "gitpod /workspace/streaming-course (master)" in the terminal
+
+# shutdown the kafka cluster
+ docker-compose -f streaming-cluster.yml down
