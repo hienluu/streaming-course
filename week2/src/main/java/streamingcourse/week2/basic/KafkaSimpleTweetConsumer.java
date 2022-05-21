@@ -1,7 +1,5 @@
-package streamingcourse.week2;
+package streamingcourse.week2.basic;
 
-
-import kafka.cluster.Partition;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -14,8 +12,8 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
+import static streamingcourse.week2.PrintColorCode.*;
 
 /**
  * A simple Kafka consumer to demonstrate how to read messages from Kafka cluster
@@ -36,7 +34,7 @@ public class KafkaSimpleTweetConsumer {
 
         Properties props = createKafkaProperties();
 
-        boolean start_from_beginning = false;
+        boolean start_from_beginning = true;
 
         System.out.println(" =======================  consumer information =========================");
         System.out.println("Consuming group: " + GROUP_ID + " subscribe to topic: " + KAFKA_TOPIC_TO_CONSUME_FROM);
@@ -59,9 +57,10 @@ public class KafkaSimpleTweetConsumer {
             while (true) {
                 ConsumerRecords<String, String> messages = consumer.poll(timeout);
 
+
                 for (ConsumerRecord<String, String> msg : messages) {
-                    System.out.printf("topic: %s, partition: %d, offset: %d, key: %s, value: %s\n",
-                            msg.topic(), msg.partition(), msg.offset(), msg.key(), msg.value());
+                    System.out.printf("%s topic: %s, partition: %d, offset: %d, key: %s, value: %s\n",
+                            ansiBlue(), msg.topic(), msg.partition(), msg.offset(), msg.key(), msg.value());
                 }
             }
         }  catch (Exception e) {

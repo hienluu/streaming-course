@@ -15,22 +15,22 @@ kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:290
 # describe a topic to see # of partitions and replicas
 kafka-topics.sh --zookeeper zookeeper:2181 --topic streaming.week2.tweets --describe
 
-# reset partition off set to the earliest for consumer group id "streamingcourse.week2.KafkaSimpleTweetConsumer"
+# reset partition off set to the earliest for consumer group id "streamingcourse.week2.basic.KafkaSimpleTweetConsumer"
 kafka-consumer-groups.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
  --execute --reset-offsets \
- --group streamingcourse.week2.KafkaSimpleTweetConsumer \
+ --group streamingcourse.week2.basic.KafkaSimpleTweetConsumer \
  --topic streaming.week2.tweets \
  --to-earliest
 
 # can confirm using the kafka drop UI, the Consumer Offset column should contain 0 for each partition
-http://localhost:9000/consumer/streamingcourse.week2.KafkaSimpleTweetConsumer
+http://localhost:9000/consumer/streamingcourse.week2.basic.KafkaSimpleTweetConsumer
 
-# reset partition off set to the earliest for consumer group id "streamingcourse.week2.KafkaConsumerGroupTweetConsumer"
+# reset partition off set to the earliest for consumer group id "streamingcourse.week2.basic.KafkaConsumerGroupTweetConsumer"
  kafka-consumer-groups.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
   --execute --reset-offsets \
-  --group streamingcourse.week2.KafkaConsumerGroupTweetConsumer \
+  --group streamingcourse.week2.basic.KafkaConsumerGroupTweetConsumer \
   --topic streaming.week2.tweets \
   --to-earliest
 
  # can confirm using the kafka drop UI, the Consumer Offset column should contain 0 for each partition
- http://localhost:9000/consumer/streamingcourse.week2.KafkaConsumerGroupTweetConsumer
+ http://localhost:9000/consumer/streamingcourse.week2.basic.KafkaConsumerGroupTweetConsumer

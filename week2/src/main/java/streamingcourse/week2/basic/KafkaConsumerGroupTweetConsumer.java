@@ -1,4 +1,4 @@
-package streamingcourse.week2;
+package streamingcourse.week2.basic;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -13,6 +13,8 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import static streamingcourse.week2.PrintColorCode.*;
 
 /**
  * This example shows how to start multiple consumers for a consumer group.
@@ -34,7 +36,7 @@ public class KafkaConsumerGroupTweetConsumer {
         System.out.println(KafkaConsumerGroupTweetConsumer.class.getName());
 
         int numConsumers = 3;
-        boolean start_from_beginning = false;
+        boolean start_from_beginning = true;
 
         System.out.println("=======================  consumer information =========================");
         System.out.println(" Consuming group: " + GROUP_ID + " subscribe to topic: " + KAFKA_TOPIC_TO_CONSUME_FROM);
@@ -96,6 +98,8 @@ public class KafkaConsumerGroupTweetConsumer {
         private final List<String> topicList;
         private final Duration timeout;
         private final boolean from_beginning;
+
+        private final String ansiColor;
         private static final int retry_count = 5;
 
 
@@ -105,6 +109,7 @@ public class KafkaConsumerGroupTweetConsumer {
             this.topicList = topicList;
             this.timeout = timeout;
             this.from_beginning = from_beginning;
+            this.ansiColor = getAnsiColor(consumerId);
 
             consumer = new KafkaConsumer<String, String>(props);
         }
@@ -122,8 +127,8 @@ public class KafkaConsumerGroupTweetConsumer {
                     ConsumerRecords<String, String> messages = consumer.poll(timeout);
 
                     for (ConsumerRecord<String, String> msg : messages) {
-                        System.out.printf("consumer: %d, partition: %d, offset: %d, key: %s, value: %s\n",
-                                consumerId,  msg.partition(), msg.offset(), msg.key(), msg.value());
+                        System.out.printf("%s consumer: %d, partition: %d, offset: %d, key: %s, value: %s\n",
+                                ansiColor ,consumerId,  msg.partition(), msg.offset(), msg.key(), msg.value());
                     }
                 }
             } catch (WakeupException e) {

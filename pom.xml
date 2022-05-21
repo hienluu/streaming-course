@@ -9,13 +9,16 @@
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Project for streaming-course</name>
+  <name>streaming course</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <log4j2-version>2.13.3</log4j2-version>
     <kafka.version>2.7.1</kafka.version>
+    <jackson.version>2.10.5</jackson.version>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
   </properties>
 
   <modules>

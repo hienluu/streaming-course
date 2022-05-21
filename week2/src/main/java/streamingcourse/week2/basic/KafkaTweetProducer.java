@@ -1,4 +1,4 @@
-package streamingcourse.week2;
+package streamingcourse.week2.basic;
 
 
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -9,6 +9,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
 
 /**
  * Simple Kafka producer send messages in string format (key,value)
