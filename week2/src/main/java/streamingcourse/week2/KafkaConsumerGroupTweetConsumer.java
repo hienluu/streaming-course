@@ -4,14 +4,12 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -35,16 +33,15 @@ public class KafkaConsumerGroupTweetConsumer {
     public static void main(String[] args) {
         System.out.println(KafkaConsumerGroupTweetConsumer.class.getName());
 
-        int numConsumers = 3;
-        boolean start_from_beginning = false;
+        int numConsumers = 2;
+        boolean start_from_beginning = true;
 
-        System.out.println(" =======================  consumer information =========================");
-        System.out.println("Consuming group: " + GROUP_ID + " subscribe to topic: " + KAFKA_TOPIC_TO_CONSUME_FROM);
-        System.out.println("spinning up: " + numConsumers + " consumers");
-        System.out.println("start_from_beginning: " + start_from_beginning);
-        System.out.println(" =======================  consumer information =========================");
-
-
+        System.out.println("=======================  consumer information =========================");
+        System.out.println(" Consuming group: " + GROUP_ID + " subscribe to topic: " + KAFKA_TOPIC_TO_CONSUME_FROM);
+        System.out.println(" Spinning up: " + numConsumers + " consumers");
+        System.out.println(" start_from_beginning: " + start_from_beginning);
+        System.out.println("=======================  consumer information =========================");
+        
         Properties props = createKafkaProperties();
 
         ExecutorService executorService = Executors.newFixedThreadPool(numConsumers);
@@ -52,7 +49,7 @@ public class KafkaConsumerGroupTweetConsumer {
 
         for (int i = 1; i <= numConsumers; i++) {
             KafkaTweetConsumer consumer = new KafkaTweetConsumer(props, i, Duration.ofMillis(150),
-                    Collections.singletonList(KAFKA_TOPIC_TO_CONSUME_FROM));
+                    Collections.singletonList(KAFKA_TOPIC_TO_CONSUME_FROM), start_from_beginning);
             consumerList.add(consumer);
         }
 
@@ -98,12 +95,16 @@ public class KafkaConsumerGroupTweetConsumer {
         private final int consumerId;
         private final List<String> topicList;
         private final Duration timeout;
+        private final boolean from_beginning;
+        private static final int retry_count = 5;
 
 
-        public KafkaTweetConsumer(Properties props, int consumerId, Duration timeout, List<String> topicList) {
+        public KafkaTweetConsumer(Properties props, int consumerId, Duration timeout, List<String> topicList,
+                                  boolean from_beginning) {
             this.consumerId = consumerId;
             this.topicList = topicList;
             this.timeout = timeout;
+            this.from_beginning = from_beginning;
 
             consumer = new KafkaConsumer<String, String>(props);
         }
@@ -112,6 +113,10 @@ public class KafkaConsumerGroupTweetConsumer {
         public void run() {
             try {
                 consumer.subscribe(topicList);
+
+                if (from_beginning) {
+                    resetPartitionOffset(retry_count, timeout);
+                }
 
                 while (true) {
                     ConsumerRecords<String, String> messages = consumer.poll(timeout);
@@ -131,6 +136,37 @@ public class KafkaConsumerGroupTweetConsumer {
 
         public void shutdown() {
             consumer.wakeup();
+        }
+
+        private void resetPartitionOffset(int retry_count, Duration waitDuration) {
+            System.out.printf("--- consumer: %d resetPartitionOffset with retry count of %d and wait duration of  %d ms ---\n",
+                    consumerId, retry_count, waitDuration.toMillis());
+            // trigger the connection to Kafka partition follower in order to retrieve assignment information
+            Duration partitionRetrievalWaitDuration = waitDuration;
+            consumer.poll(partitionRetrievalWaitDuration);
+            Set<TopicPartition> topicPartitionSet = consumer.assignment();
+            if (topicPartitionSet.isEmpty()) {
+                for (int i = 0; i < retry_count; i++) {
+                    consumer.poll(partitionRetrievalWaitDuration);
+                    topicPartitionSet = consumer.assignment();
+                    if (!topicPartitionSet.isEmpty()) {
+                        break;
+                    }
+                }
+                if (topicPartitionSet.isEmpty()) {
+                    System.out.printf("consumer: %d Exhausted: %d retries and unsuccessfully " +
+                            "retrieve the partition assignment information\n", consumerId, retry_count);
+                }
+            }
+            System.out.printf("consumer: %d Found: %d partitions\n", consumerId, topicPartitionSet.size());
+            topicPartitionSet.forEach(partition -> {
+                System.out.printf("consumer: %d partition: %s\n", consumerId, partition.toString());
+
+            });
+            // seek for the beginning of the provided partitions
+            consumer.seekToBeginning(topicPartitionSet);
+
+            System.out.println();
         }
     }
 

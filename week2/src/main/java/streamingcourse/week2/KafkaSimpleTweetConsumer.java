@@ -45,7 +45,7 @@ public class KafkaSimpleTweetConsumer {
 
         KafkaConsumer<String,String> consumer = new KafkaConsumer<String, String>(props);
         consumer.subscribe(Collections.singletonList(KAFKA_TOPIC_TO_CONSUME_FROM));
-        
+
         int retry_count = 5;
         if (start_from_beginning) {
             resetPartitionOffset(consumer, retry_count, Duration.ofMillis(200));
