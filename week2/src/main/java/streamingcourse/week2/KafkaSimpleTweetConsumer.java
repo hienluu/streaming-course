@@ -36,7 +36,7 @@ public class KafkaSimpleTweetConsumer {
 
         Properties props = createKafkaProperties();
 
-        boolean start_from_beginning = true;
+        boolean start_from_beginning = false;
 
         System.out.println(" =======================  consumer information =========================");
         System.out.println("Consuming group: " + GROUP_ID + " subscribe to topic: " + KAFKA_TOPIC_TO_CONSUME_FROM);

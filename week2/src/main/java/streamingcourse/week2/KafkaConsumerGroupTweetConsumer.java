@@ -33,15 +33,15 @@ public class KafkaConsumerGroupTweetConsumer {
     public static void main(String[] args) {
         System.out.println(KafkaConsumerGroupTweetConsumer.class.getName());
 
-        int numConsumers = 2;
-        boolean start_from_beginning = true;
+        int numConsumers = 3;
+        boolean start_from_beginning = false;
 
         System.out.println("=======================  consumer information =========================");
         System.out.println(" Consuming group: " + GROUP_ID + " subscribe to topic: " + KAFKA_TOPIC_TO_CONSUME_FROM);
         System.out.println(" Spinning up: " + numConsumers + " consumers");
         System.out.println(" start_from_beginning: " + start_from_beginning);
         System.out.println("=======================  consumer information =========================");
-        
+
         Properties props = createKafkaProperties();
 
         ExecutorService executorService = Executors.newFixedThreadPool(numConsumers);
