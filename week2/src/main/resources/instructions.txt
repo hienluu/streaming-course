@@ -1,0 +1,23 @@
+#  https://kafka.apache.org/documentation/#operations
+
+# Create a Kafka topic using command line
+kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+                --topic streaming.week2.tweets \
+                --partitions 3 \
+                --replication-factor 2
+
+# list topics - should see three partitions for topic streaming.week2.tweets
+kafka-topics.sh --zookeeper zookeeper:2181 --list
+
+# if you ever would like to delete a topic to restart from scratch
+kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic streaming.week2.tweets
+
+# describe a topic to see # of partitions and replicas
+kafka-topics.sh --zookeeper zookeeper:2181 --topic streaming.week2.tweets --describe
+
+# consumer from the earliest
+kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+ --execute --reset-offsets \
+ --group myConsumerGroup \
+ --topic streaming.week2.tweets \
+ --to-earliest

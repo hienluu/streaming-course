@@ -1,4 +1,4 @@
-package my.learning.streamingcource.week1;
+package streamingcourse.week2;
 
 
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class KafkaTweetProducer {
     private static final String BOOTSTRAP_SERVER_LIST = "localhost:9092,localhost:9093,localhost:9094";
-    private static final String KAFKA_STRING_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
-    private static final long SLEEP_TIME_IN_MS = TimeUnit.SECONDS.toMillis(2);
+    private static final String KAFKA_STRING_SERIALIZER = StringSerializer.class.getName();
+    private static final long SLEEP_TIME_IN_MS = TimeUnit.SECONDS.toMillis(1);
     private static final int NUM_MSGS_TO_SEND = 20;
     private static final String KAFKA_TOPIC_TO_SEND_TO = "streaming.week2.tweets";
 

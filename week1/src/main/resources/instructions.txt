@@ -18,11 +18,20 @@
 # log into one of the kafka brokers using container name
 docker exec -it kafka-broker1 bash
 
+#  https://kafka.apache.org/documentation/#operations
+
+# Create a Kafka topic using command line
+kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+                --topic streaming.week1.tweets \
+                --partitions 2 \
+                --replication-factor 3
+
+
 # list topics
 kafka-topics.sh --zookeeper zookeeper:2181 --list
 
 # describe a topic to see # of partitions and replicas
-kafka-topics.sh --zookeeper zookeeper:2181 --topic week1 --describe
+kafka-topics.sh --zookeeper zookeeper:2181 --topic streaming.week1.tweets --describe
 
 # run the KafkaTweetProducer java file to produce simple tweet messages to "streaming.week1.tweets" topic
 - click on the "Explorer" icon on the left sidebar, expand week1/src/main folder
