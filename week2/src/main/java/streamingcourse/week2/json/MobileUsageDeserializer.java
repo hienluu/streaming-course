@@ -15,6 +15,7 @@ public class MobileUsageDeserializer <T> implements Deserializer<T> {
     public void configure(Map<String, ?> configs, boolean isKey) {
         Deserializer.super.configure(configs, isKey);
         objectMapper = JsonMapper.builder().build(); //.registerModule();
+        objectMapper.findAndRegisterModules();
     }
 
     @Override

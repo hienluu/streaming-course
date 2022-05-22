@@ -26,11 +26,22 @@ kafka-consumer-groups.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:290
 http://localhost:9000/consumer/streamingcourse.week2.basic.KafkaSimpleTweetConsumer
 
 # reset partition off set to the earliest for consumer group id "streamingcourse.week2.basic.KafkaConsumerGroupTweetConsumer"
- kafka-consumer-groups.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+kafka-consumer-groups.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
   --execute --reset-offsets \
   --group streamingcourse.week2.basic.KafkaConsumerGroupTweetConsumer \
   --topic streaming.week2.tweets \
   --to-earliest
 
- # can confirm using the kafka drop UI, the Consumer Offset column should contain 0 for each partition
- http://localhost:9000/consumer/streamingcourse.week2.basic.KafkaConsumerGroupTweetConsumer
+
+# can confirm using the kafka drop UI, the Consumer Offset column should contain 0 for each partition
+http://localhost:9000/consumer/streamingcourse.week2.basic.KafkaConsumerGroupTweetConsumer
+
+
+# ====================== JSON related are =================================
+# Create a Kafka topic using command line
+kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+                 --topic streaming.week2.mobile \
+                 --partitions 3 \
+                 --replication-factor 2
+
+kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic streaming.week2.mobile

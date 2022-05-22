@@ -19,13 +19,13 @@ public class MobileUsageSerializer <T> implements Serializer<T> {
         Serializer.super.configure(configs, isKey);
         objectMapper =
                 JsonMapper.builder()
-                        .build()
+                        .build().findAndRegisterModules();
                         // .registerModule(new JavaTimeModule())
-                        .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+                        //.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
     }
 
     @Override
-    public byte[] serialize(String s, T t) {
+    public byte[] serialize(String topic, T t) {
         try {
             return objectMapper.writeValueAsBytes(t);
         } catch (JsonProcessingException e) {
