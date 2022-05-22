@@ -1,6 +1,7 @@
 package streamingcourse.week2.basic;
 
 
+import com.github.javafaker.Faker;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -25,6 +26,7 @@ public class KafkaTweetProducer {
     private static final String KAFKA_TOPIC_TO_SEND_TO = "streaming.week2.tweets";
 
     public static void main(String[] args) {
+        Faker faker = new Faker();
 
         //Setup Properties for Kafka Producer
         Properties kafkaProps = new Properties();
@@ -51,13 +53,14 @@ public class KafkaTweetProducer {
             System.out.println("... sleeping time in MS: " + SLEEP_TIME_IN_MS);
 
             for( int i=startKey; i <= startKey + NUM_MSGS_TO_SEND; i++) {
-
+                String quote = faker.buffy().quotes();
                 //Create a producer Record
                 ProducerRecord<String, String> kafkaRecord =
+
                         new ProducerRecord<String, String>(
                                 KAFKA_TOPIC_TO_SEND_TO,    //Topic name
-                                String.valueOf(i),          //Key for the message
-                                "This is tweet message " + i         //Message Content
+                                String.valueOf(i),         //Key for the message
+                                quote                      //Value: message Content
                         );
 
                 System.out.println("Sending Message : "+ kafkaRecord.toString());
