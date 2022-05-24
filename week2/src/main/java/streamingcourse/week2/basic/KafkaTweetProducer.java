@@ -6,11 +6,13 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
+import streamingcourse.week2.KafkaCommonProperties;
 
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import static streamingcourse.week2.KafkaCommonProperties.*;
 
 /**
  * Simple Kafka producer send messages in string format (key,value)
@@ -19,11 +21,10 @@ import java.util.concurrent.TimeUnit;
  * It will sleep for SLEEP_TIME_IN_MS between each message
  */
 public class KafkaTweetProducer {
-    private static final String BOOTSTRAP_SERVER_LIST = "localhost:9092,localhost:9093,localhost:9094";
     private static final String KAFKA_STRING_SERIALIZER = StringSerializer.class.getName();
     private static final long SLEEP_TIME_IN_MS = TimeUnit.SECONDS.toMillis(1);
-    private static final int NUM_MSGS_TO_SEND = 20;
-    private static final String KAFKA_TOPIC_TO_SEND_TO = "streaming.week2.tweets";
+    private static final int NUM_MSGS_TO_SEND = 10;
+    private static final String KAFKA_TOPIC_TO_SEND_TO = TWEETS_TOPIC_NAME;
 
     public static void main(String[] args) {
         Faker faker = new Faker();

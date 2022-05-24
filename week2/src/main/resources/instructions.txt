@@ -15,6 +15,18 @@ kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:290
 # describe a topic to see # of partitions and replicas
 kafka-topics.sh --zookeeper zookeeper:2181 --topic streaming.week2.tweets --describe
 
+# run the KafkaSimpleTweetConsumer in the editor to produce tweets
+
+# consume tweets and display in the console
+kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+    --topic streaming.week2.tweets \
+    --from-beginning \
+    --formatter kafka.tools.DefaultMessageFormatter \
+    --property print.key=true \
+    --property print.value=true \
+    --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer \
+    --property value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+
 # reset partition off set to the earliest for consumer group id "streamingcourse.week2.basic.KafkaSimpleTweetConsumer"
 kafka-consumer-groups.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
  --execute --reset-offsets \
@@ -37,7 +49,7 @@ kafka-consumer-groups.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:290
 http://localhost:9000/consumer/streamingcourse.week2.basic.KafkaConsumerGroupTweetConsumer
 
 
-# ====================== JSON related are =================================
+# ====================== JSON related  =================================
 # Create a Kafka topic using command line
 kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
                  --topic streaming.week2.mobile \
@@ -45,3 +57,27 @@ kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:290
                  --replication-factor 2
 
 kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic streaming.week2.mobile
+
+# ===================== Kafka Streams related =================================
+# create an topic to display to send word count output to
+kafka-topics.sh --create \
+    --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic streaming-week2-wordcount-output \
+    --config cleanup.policy=compact
+
+
+
+# verify the output topic
+kafka-topics.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 --describe -topic streaming-week2-tweets-output
+
+# consume the word count output
+kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+    --topic streaming-week2-wordcount-output \
+    --from-beginning \
+    --formatter kafka.tools.DefaultMessageFormatter \
+    --property print.key=true \
+    --property print.value=true \
+    --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer \
+    --property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer

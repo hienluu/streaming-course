@@ -35,6 +35,13 @@
             <version>${kafka.version}</version>
         </dependency>
 
+        <!-- kafka streams -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+            <version>2.7.2</version>
+        </dependency>
+
         <!-- Adding jackson dependencies. They must be in the default scope (compile). -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

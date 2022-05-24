@@ -8,6 +8,8 @@ public class FakeDataGenerator {
         for (int i = 0; i < 100; i++) {
             System.out.printf("%d: %s\n", i, faker.backToTheFuture().quote());
             System.out.printf("%d: %s\n", i, faker.buffy().quotes());
+            System.out.printf("%d: %s\n", i, faker.stock().nsdqSymbol());
+            System.out.printf("%d: %s\n", i, faker.commerce().price());
             System.out.println();
         }
     }

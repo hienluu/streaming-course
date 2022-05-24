@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import static streamingcourse.week2.PrintColorCode.*;
+import static streamingcourse.week2.KafkaCommonProperties.*;
 
 /**
  * A simple Kafka consumer to demonstrate how to read messages from Kafka cluster
@@ -25,7 +26,7 @@ import static streamingcourse.week2.PrintColorCode.*;
  */
 public class KafkaSimpleTweetConsumer {
     private static final String BOOTSTRAP_SERVER_LIST = "localhost:9092,localhost:9093,localhost:9094";
-    private static final String KAFKA_TOPIC_TO_CONSUME_FROM = "streaming.week2.tweets";
+    private static final String KAFKA_TOPIC_TO_CONSUME_FROM = TWEETS_TOPIC_NAME;
     private static final String GROUP_ID = KafkaSimpleTweetConsumer.class.getName();
 
 

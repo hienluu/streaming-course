@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static streamingcourse.week2.PrintColorCode.*;
+import static streamingcourse.week2.KafkaCommonProperties.*;
 
 /**
  * This example shows how to start multiple consumers for a consumer group.
@@ -28,7 +29,7 @@ import static streamingcourse.week2.PrintColorCode.*;
  */
 public class KafkaConsumerGroupTweetConsumer {
     private static final String BOOTSTRAP_SERVER_LIST = "localhost:9092,localhost:9093,localhost:9094";
-    private static final String KAFKA_TOPIC_TO_CONSUME_FROM = "streaming.week2.tweets";
+    private static final String KAFKA_TOPIC_TO_CONSUME_FROM = TWEETS_TOPIC_NAME;
     private static final String GROUP_ID = KafkaConsumerGroupTweetConsumer.class.getName();
 
 
