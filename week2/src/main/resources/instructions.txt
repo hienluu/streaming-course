@@ -58,21 +58,18 @@ kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:290
 
 kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic streaming.week2.mobile
 
+# =============================================================================
 # ===================== Kafka Streams related =================================
+# =============================================================================
 
 # create a topic to read message to perform word count
 # you can do this from Kafkadrop UI as well
 kafka-topics.sh --create \
     --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
     --replication-factor 1 \
-    --partitions 1 \
+    --partitions 2 \
     --topic week2-wordcount-input
 
-# run the KStreamWordCount application
-
-
-# produce messages to week2-wordcount-input for
-kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 --topic week2-wordcount-input
 
 # create a topic to display to send word count output to
 kafka-topics.sh --create \
@@ -81,8 +78,12 @@ kafka-topics.sh --create \
     --partitions 1 \
     --topic week2-wordcount-output
 
-# verify the output topic
-kafka-topics.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 --describe -topic week2-wordcount-output
+# verify the input and output topic using Kafdrop UI or commands below
+kafka-topics.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+    --describe -topic week2-wordcount-input
+
+kafka-topics.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+    --describe -topic week2-wordcount-output
 
 # consume the word count output
 kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
@@ -90,10 +91,25 @@ kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29
     --from-beginning \
     --property print.key=true
 
+
+# run the KStreamWordCount application
+
+
+# produce messages to week2-wordcount-input for
+kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 \
+     --topic week2-wordcount-input
+
+
+# =============================================================================
+# when things are messed up and you want to reset everything
+# =============================================================================
+
 # reset the internal state
+# https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Streams+Application+Reset+Tool
 kafka-streams-application-reset.sh --application-id kstreams-wordcount-app --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 --input-topics wordcount-input
 
 
 # when encountered an error "Tried to lookup lag for unknown task 1_0"
+# run this command on the machine that runs the Kafka Streams application
 # remove /private/tmp/kafka-streams/kstreams-wordcount-app directory
 * rm -r /private/tmp/kafka-streams/kstreams-wordcount-app

@@ -1,32 +1,33 @@
 package streamingcourse.week2.kafkastreams;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.*;
+import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KTable;
+import org.apache.kafka.streams.kstream.Predicate;
+import org.apache.kafka.streams.kstream.Printed;
 
-
-import java.util.Arrays;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
-import static streamingcourse.week2.KafkaCommonProperties.*;
+import static streamingcourse.week2.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
 
-public class KStreamWordCount {
-    public static final String WORD_COUNT_INPUT_TOPIC_NAME = "week2-wordcount-input";
-    public static final String WORD_COUNT_OUTPUT_TOPIC_NAME = "week2-wordcount-output";
+/**
+ * Examples of stateless operators
+ */
+public class KStreamStateless {
+    private static final String WORD_COUNT_INPUT_TOPIC_NAME = "week2-wordcount-input";
 
     public static void main(final String[] args) throws Exception {
-        System.out.println("============== KStreamWordCount.main ============= ");
+        System.out.println("============== KStreamStateless.main ============= ");
         System.out.println("reading lines from:  " + WORD_COUNT_INPUT_TOPIC_NAME);
-        System.out.println("writing word count results to:  " + WORD_COUNT_OUTPUT_TOPIC_NAME);
-        System.out.println("============== KStreamWordCount.main ============= ");
+        System.out.println("============== KStreamStateless.main ============= ");
 
         Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "kstreams-wordcount-app");
-        props.put(StreamsConfig.CLIENT_ID_CONFIG, "kstreams-wordcount-app-client");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "kstreams-stateless-app");
+        props.put(StreamsConfig.CLIENT_ID_CONFIG, "kstreams-stateless-app-client");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER_LIST);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
@@ -46,29 +47,39 @@ public class KStreamWordCount {
         // create a stream from the WORD_COUNT_INPUT_TOPIC_NAME
         KStream<String, String> lineStream = builder.stream(WORD_COUNT_INPUT_TOPIC_NAME);
 
-        // regex pattern to split each line into words
-        Pattern pattern = Pattern.compile("\\W+", Pattern.UNICODE_CHARACTER_CLASS);
+        KStream<String, String> exceptionStream = lineStream.filter((key,line) ->
+                line.contains("Exception"));
 
-        KStream wordCounts = lineStream
-                .flatMapValues(line -> Arrays.asList(pattern.split(line.toLowerCase())))
-                .filter((key,value) -> !value.equals("the"))
-                .groupBy((key, word) -> word)
-                .count()
-                        .mapValues(value -> Long.toString(value))
-                                .toStream();
+        // transform only the value to lowercase
+        KStream<String, String> lowerCaseStream = exceptionStream.mapValues(line ->
+                line.toLowerCase());
 
-        wordCounts.to(WORD_COUNT_OUTPUT_TOPIC_NAME);
+        lowerCaseStream.peek((key,value) ->
+                System.out.printf("key: %s, value: %s\n", key,value));
+
+        KStream<String, String> regularStream = lineStream.filterNot((key,line) ->
+                line.contains("Exception"));
+        regularStream.print(Printed.toSysOut());
+
+        Predicate<String,String> sqlException = (key,line) -> line.contains("SQLException");
+        Predicate<String,String> ioException = (key, line) -> line.contains("IOException");
+
+        KStream<String, String>[] branches = lineStream.branch(sqlException, ioException);
+
+        KStream<String, String> sqlExpStream = branches[0];
+        KStream<String, String> ioExpStream = branches[1];
 
         System.out.println("Building topology");
         Topology topology = builder.build();
         System.out.println("topology: "  + topology.describe().toString());
         KafkaStreams streams = new KafkaStreams(topology, props);
 
-        // Now run the processing topology via `start()` to begin processing its input data.
+
         System.out.println("Start running the topology");
         streams.start();
 
         // shutdown hook to properly and gracefully close the streams application
         Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
+
     }
 }
