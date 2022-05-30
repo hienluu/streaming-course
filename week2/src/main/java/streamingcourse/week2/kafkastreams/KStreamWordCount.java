@@ -1,5 +1,6 @@
 package streamingcourse.week2.kafkastreams;
 
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 
 import org.apache.kafka.common.serialization.Serdes;
@@ -10,6 +11,7 @@ import org.apache.kafka.streams.kstream.KTable;
 
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import static streamingcourse.week2.KafkaCommonProperties.*;
@@ -18,6 +20,7 @@ public class KStreamWordCount {
     public static final String WORD_COUNT_INPUT_TOPIC_NAME = "week2-wordcount-input";
     public static final String WORD_COUNT_OUTPUT_TOPIC_NAME = "week2-wordcount-output";
 
+    private static Logger log = Logger.getLogger(KStreamWordCount.class.getName());
     public static void main(final String[] args) throws Exception {
         System.out.println("============== KStreamWordCount.main ============= ");
         System.out.println("reading lines from:  " + WORD_COUNT_INPUT_TOPIC_NAME);
@@ -49,7 +52,7 @@ public class KStreamWordCount {
         // regex pattern to split each line into words
         Pattern pattern = Pattern.compile("\\W+", Pattern.UNICODE_CHARACTER_CLASS);
 
-        KStream wordCounts = lineStream
+        KStream<String,String> wordCounts = lineStream
                 .flatMapValues(line -> Arrays.asList(pattern.split(line.toLowerCase())))
                 .filter((key,value) -> !value.equals("the"))
                 .groupBy((key, word) -> word)
@@ -66,6 +69,8 @@ public class KStreamWordCount {
 
         // Now run the processing topology via `start()` to begin processing its input data.
         System.out.println("Start running the topology");
+        streams.cleanUp();
+
         streams.start();
 
         // shutdown hook to properly and gracefully close the streams application
