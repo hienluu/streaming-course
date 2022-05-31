@@ -10,33 +10,48 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 
+import com.github.javafaker.Faker;
+
 import java.time.Instant;
 import java.util.Properties;
-import java.util.Random;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
-public class KafkaJsonProducer {
-    private static final String BOOTSTRAP_SERVER_LIST = "localhost:9092,localhost:9093,localhost:9094";
+import static streamingcourse.week2.KafkaCommonProperties.*;
+
+/**
+ * This Kafka producer produces Kafka records using custom type MobileUsage.
+ * It uses the custom serializer called @{MobileUsageSerializer}
+ */
+public class MobileUsageProducer {
+
     private static final String KEY_SERIALIZER = StringSerializer.class.getName();
     private static final String VALUE_SERIALIZER = MobileUsageSerializer.class.getName();
     private static final long SLEEP_TIME_IN_MS = TimeUnit.SECONDS.toMillis(1);
-    private static final int NUM_MSGS_TO_SEND = 20;
-    private static final String KAFKA_TOPIC_TO_SEND_TO = "streaming.week2.mobile";
+    private static final int NUM_MSG_TO_SEND = 10;
+    public static final String KAFKA_TOPIC_TO_SEND_TO = "streaming.week2.mobile_usage";
 
+    private static final Logger LOGGER = LogManager.getLogger(MobileUsageProducer.class.getName());
     public static void main(String[] args) {
+
+        LOGGER.info(" =======================  MobileUsageProducer =========================");
+        LOGGER.info("NUM_MSG_TO_SEND: " + NUM_MSG_TO_SEND);
+        LOGGER.info("KAFKA_TOPIC_TO_SEND_TO: " + KAFKA_TOPIC_TO_SEND_TO);
+        LOGGER.info("VALUE_SERIALIZER: " + VALUE_SERIALIZER);
+        LOGGER.info("VALUE_SERIALIZER: " + VALUE_SERIALIZER);
+        LOGGER.info(" =======================  MobileUsageProducer =========================");
+
 
         //Setup Properties for Kafka Producer
         Properties kafkaProps = new Properties();
-
-        kafkaProps.put(ProducerConfig.CLIENT_ID_CONFIG, "KafkaMobileProducer");
-
+        kafkaProps.put(ProducerConfig.CLIENT_ID_CONFIG, "MobileUsageProducer");
         //List of brokers to connect to
         kafkaProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER_LIST);
-
         //Serializer class used to convert Keys to Byte Arrays
         kafkaProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KEY_SERIALIZER);
-
         //Serializer class used to convert Messages to Byte Arrays
         kafkaProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, VALUE_SERIALIZER);
 
@@ -44,30 +59,30 @@ public class KafkaJsonProducer {
         KafkaProducer<String, MobileUsage> simpleProducer = new KafkaProducer<String, MobileUsage>(kafkaProps);
 
         try {
-
-            MobileUsage bobUsage = new MobileUsage();
-            bobUsage.userName = "bob";
-            bobUsage.bytesUsed = 25;
-            bobUsage.timeStamp = Instant.now();
+            MobileUsageGenerator generator  = new MobileUsageGenerator(15);
+            int rowCount = 0;
+            while (rowCount < NUM_MSG_TO_SEND) {
+                MobileUsage mobileUsage = generator.next();
 
                 //Create a producer Record
                 ProducerRecord<String, MobileUsage> bobKafkaRecord =
                         new ProducerRecord<String, MobileUsage>(
                                 KAFKA_TOPIC_TO_SEND_TO,    //Topic name
-                                bobUsage.userName,  bobUsage);
+                                mobileUsage.userName,  mobileUsage);
 
-            Future<RecordMetadata> response = simpleProducer.send(bobKafkaRecord);
-            printRecordMetaData(response.get());
+                Future<RecordMetadata> response = simpleProducer.send(bobKafkaRecord);
+                printRecordMetaData(response.get());
 
+                rowCount++;
+            }
         }
         catch(Exception e) {
-            System.out.println("Got exception: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.error("Got exception: " + e.getMessage(), e);
         }
         finally {
             simpleProducer.close();
         }
-        System.out.println("Finish sending " + NUM_MSGS_TO_SEND + " messages");
+        LOGGER.info("Finish sending " + NUM_MSG_TO_SEND + " messages");
     }
 
     private static void printRecordMetaData(RecordMetadata rm) {

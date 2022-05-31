@@ -115,12 +115,19 @@ kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 \
 # ====================== Working with mobile usage example related  =================================
 # Create a Kafka topic using command line
 kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
-                 --topic streaming.week2.mobile \
+                 --topic streaming.week2.mobile_usage \
                  --partitions 3 \
                  --replication-factor 2
 
 # if you ever need to delete the topic
-kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic streaming.week2.mobile
+kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic streaming.week2.mobile_usage
+
+# run MobileUsageProducer
+
+# run MobileUsageDisplay
+
+# reset the offset
+kafka-streams-application-reset.sh --application-id MobileUsageDisplay-app --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 --input-topics streaming.week2.mobile_usage
 
 # =============================================================================
 # when things are messed up and you want to reset everything
