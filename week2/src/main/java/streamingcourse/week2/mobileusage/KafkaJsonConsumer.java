@@ -1,4 +1,4 @@
-package streamingcourse.week2.json;
+package streamingcourse.week2.mobileusage;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
-import static streamingcourse.week2.PrintColorCode.ansiBlue;
 import static streamingcourse.week2.PrintColorCode.ansiYellow;
 
 public class KafkaJsonConsumer {

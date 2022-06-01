@@ -1,10 +1,9 @@
-package streamingcourse.week2.json;
+package streamingcourse.week2.mobileusage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Deserializer;
-import streamingcourse.week2.json.MobileUsage;
 
 import java.util.Map;
 

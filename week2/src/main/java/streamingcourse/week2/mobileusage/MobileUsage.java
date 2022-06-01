@@ -1,4 +1,4 @@
-package streamingcourse.week2.json;
+package streamingcourse.week2.mobileusage;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -23,6 +23,10 @@ public class MobileUsage {
         this.timeStamp = ts;
         this.userName = userName;
         this.bytesUsed = bytesUsed;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     @Override

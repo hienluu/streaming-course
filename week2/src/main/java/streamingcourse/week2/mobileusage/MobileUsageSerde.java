@@ -1,4 +1,4 @@
-package streamingcourse.week2.json;
+package streamingcourse.week2.mobileusage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +16,11 @@ import java.util.Map;
  */
 public class MobileUsageSerde<T> implements Serializer<T>, Deserializer<T>, Serde<T> {
     private transient ObjectMapper objectMapper;
+
+    public MobileUsageSerde() {
+        objectMapper = JsonMapper.builder().build(); //.registerModule();
+        objectMapper.findAndRegisterModules();
+    }
 
     @Override
     public T deserialize(String s, byte[] bytes) {

@@ -1,10 +1,9 @@
-package streamingcourse.week2.json;
+package streamingcourse.week2.mobileusage;
 
 import com.github.javafaker.Faker;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 public class MobileUsageGenerator {

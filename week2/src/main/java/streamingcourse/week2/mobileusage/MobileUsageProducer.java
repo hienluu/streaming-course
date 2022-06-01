@@ -1,4 +1,4 @@
-package streamingcourse.week2.json;
+package streamingcourse.week2.mobileusage;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,8 +9,6 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
-
-import com.github.javafaker.Faker;
 
 import java.time.Instant;
 import java.util.Properties;
