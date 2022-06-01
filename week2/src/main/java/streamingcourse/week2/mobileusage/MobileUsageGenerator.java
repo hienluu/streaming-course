@@ -13,23 +13,18 @@ public class MobileUsageGenerator {
     private Random byteUsedRandomGen = new Random();
     private Random timeRandomGen = new Random();
 
-    private Instant now = Instant.now();
+    private Instant clock;
 
-    private Map<String,Instant> timerPerUser;
+
     public MobileUsageGenerator(int numDaysInThePast) {
         if (numDaysInThePast < 1) {
             throw  new IllegalArgumentException("numDaysInThePast can't be less than 1");
         }
         userNameList = Arrays.asList("jb", "mjane", "skunky", "tweetie", "bobby", "dreamer",
                 "onetimer", "skywalker", "theman", "walker", "flyer", "hiker",
-                "theone", "hithere", "justdoit", "whynot", "whoami", "youareit",
-                "gamer", "drinker");
+                "theone", "gamer", "justdoit", "drinker", "whoami", "youareit");
 
-        timerPerUser = new HashMap<>(userNameList.size());
-        userNameList.stream().forEach(userName -> {
-            timerPerUser.put(userName, Instant.now().minus(numDaysInThePast, ChronoUnit.DAYS));
-        });
-
+        clock = Instant.now().minus(numDaysInThePast, ChronoUnit.DAYS);
     }
 
     public MobileUsage next() {
@@ -38,13 +33,12 @@ public class MobileUsageGenerator {
         mobileUsage.userName = userNameList.get(randomUserIdx);
         mobileUsage.bytesUsed = byteUsedRandomGen.nextInt(1000) + 35;
 
-        Instant timerForUser = timerPerUser.get(mobileUsage.userName);
+        // timeStamp is advancing from the clock at the minimum of 30 seconds
+        Instant timeStamp = clock.plus(timeRandomGen.nextInt(30) + 15, ChronoUnit.SECONDS);
+        mobileUsage.timeStamp = timeStamp;
 
-        Instant newTimerForUser = timerForUser.plus(timeRandomGen.nextInt(120) + 30, ChronoUnit.SECONDS);
-        // update the map w/ the updated timer
-        timerPerUser.put(mobileUsage.userName, newTimerForUser);
-
-        mobileUsage.timeStamp = newTimerForUser;
+        // update the clock so it is advancing.  This means the clock will advance between records
+        clock = timeStamp;
 
         return mobileUsage;
     }

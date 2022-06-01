@@ -29,7 +29,7 @@ public class MobileUsageProducer {
     private static final String KEY_SERIALIZER = StringSerializer.class.getName();
     private static final String VALUE_SERIALIZER = MobileUsageSerializer.class.getName();
     private static final long SLEEP_TIME_IN_MS = TimeUnit.SECONDS.toMillis(1);
-    private static final int NUM_MSG_TO_SEND = 10;
+    private static final int NUM_MSG_TO_SEND = 15;
     public static final String KAFKA_TOPIC_TO_SEND_TO = "streaming.week2.mobile_usage";
 
     private static final Logger LOGGER = LogManager.getLogger(MobileUsageProducer.class.getName());

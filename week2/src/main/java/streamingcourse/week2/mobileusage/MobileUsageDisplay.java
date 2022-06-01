@@ -8,7 +8,6 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.*;
-import org.apache.kafka.streams.processor.TimestampExtractor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import streamingcourse.week2.kafkastreams.KStreamDisplay;
@@ -16,6 +15,7 @@ import streamingcourse.week2.kafkastreams.KStreamDisplay;
 import java.time.Duration;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static streamingcourse.week2.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
 
@@ -38,18 +38,22 @@ public class MobileUsageDisplay {
 
     private static void displayCountByUser(KStream<String, MobileUsage> lineStream) {
         log.info("======== group by user, then count ========");
-        lineStream.groupBy((key, value) -> value.userName).count().toStream().peek(
+        lineStream.groupByKey().count().toStream().peek(
+//        lineStream.groupBy((key, value) -> value.userName).count().toStream().peek(
                 (key, value) -> log.info(String.format("key: %s, value: %s", key, value))
         );
     }
 
-    private static void displayCountByUserWithWindow(KStream<String, MobileUsage> lineStream) {
-        TimeWindows tumblingWindow =
-                TimeWindows.of(Duration.ofSeconds(240)).grace(Duration.ZERO);
+    private static void displayCountByUserWithWindow(KStream<String, MobileUsage> lineStream, long windowSizeInSecond) {
 
+        TimeWindows tumblingWindow =
+                TimeWindows.of(Duration.ofSeconds(windowSizeInSecond)).grace(Duration.ZERO);
         log.info("======== group by user w/ tumbling window: " + tumblingWindow + " ========");
+
         final Serde<String> stringSerde = Serdes.String();
-        KTable<Windowed<String>, Long> userCount = lineStream.groupBy((key, value) -> value.getUserName())
+        KTable<Windowed<String>, Long> userCount = lineStream
+                .groupByKey()
+                //.groupBy((key, value) -> value.getUserName())
                 .windowedBy(tumblingWindow)
                 .count(Materialized.with(Serdes.String(), Serdes.Long()))
                 .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig
@@ -101,10 +105,10 @@ public class MobileUsageDisplay {
                 );
 
 
-      // displayMobileUsageRecords(lineStream);
+      //displayMobileUsageRecords(lineStream);
 
-      //  countByUserDisplay(lineStream);
-       displayCountByUserWithWindow(lineStream);
+        //displayCountByUser(lineStream);
+       displayCountByUserWithWindow(lineStream, TimeUnit.SECONDS.toSeconds(60));
 
         Topology topology = builder.build();
         log.info("topology: "  + topology.describe().toString());
