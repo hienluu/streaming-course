@@ -33,16 +33,42 @@ public class MobileUsageDisplay {
 
     private static void displayMobileUsageRecords(KStream<String, MobileUsage> lineStream) {
         log.info("======== peeking ========");
-        lineStream.peek((key, value) -> log.info(String.format("key: %s, value: %s", key, value)));
+       // lineStream.peek((key, value) -> log.info(String.format("key: %s, value: %s", key, value)));
+        lineStream.print(Printed.<String, MobileUsage>toSysOut().withLabel("Mobile Usage"));
     }
 
     private static void displayCountByUser(KStream<String, MobileUsage> lineStream) {
         log.info("======== group by user, then count ========");
         lineStream.groupByKey().count().toStream().peek(
-//        lineStream.groupBy((key, value) -> value.userName).count().toStream().peek(
                 (key, value) -> log.info(String.format("key: %s, value: %s", key, value))
         );
     }
+
+
+    /**
+     * Display total mobile usage by user using the aggregate function
+     * @param lineStream
+     */
+    private static void displayTotalMobileUsageByUserUsingAggregate(KStream<String, MobileUsage> lineStream) {
+        log.info("======== display total mobile usage by user using aggregate function ========");
+        lineStream.groupByKey()
+                .aggregate(() -> 0.0,
+                        (key,value, total) -> total + value.getBytesUsed(),
+                    Materialized.with(Serdes.String(), Serdes.Double()))
+                .toStream()
+                .print(Printed.<String,Double>toSysOut().withLabel("user usage"));
+
+                //peek((key, value) -> log.info(String.format("key: %s, value: %s", key, value))
+       // );
+    }
+
+    private static void displayMobileUsageLeaderboard(KStream<String, MobileUsage> lineStream) {
+        Initializer<TopMobileUsage> highScoresInitializer = TopMobileUsage::new;
+
+        Aggregator<String, TotalMobileUsage, TopMobileUsage> highScoresAdder =
+                (key, value, aggregate) -> aggregate.add(value);
+    }
+
 
     private static void displayCountByUserWithWindow(KStream<String, MobileUsage> lineStream, long windowSizeInSecond) {
 
@@ -53,13 +79,11 @@ public class MobileUsageDisplay {
         final Serde<String> stringSerde = Serdes.String();
         KTable<Windowed<String>, Long> userCount = lineStream
                 .groupByKey()
-                //.groupBy((key, value) -> value.getUserName())
                 .windowedBy(tumblingWindow)
                 .count(Materialized.with(Serdes.String(), Serdes.Long()))
                 .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig
                         .unbounded().shutDownWhenFull()))
                 ;
-
 
         userCount.toStream().peek(
                 (key, value) -> log.info(String.format("window: %s-%s key: %s, value: %s",
@@ -97,18 +121,22 @@ public class MobileUsageDisplay {
         MobileUsageTimeExtractor timeExtractor = new MobileUsageTimeExtractor();
 
         StreamsBuilder builder = new StreamsBuilder();
-        // create a stream from the WORD_COUNT_INPUT_TOPIC_NAME
+
         MobileUsageSerde mobileUsageSerde = new MobileUsageSerde();
+        Serde<MobileUsage> mobileUsageSerde2 = MobileUsageAppSerdes.MobileUsage();
         KStream<String, MobileUsage> lineStream = builder.stream(MOBILE_USAGE_TOPIC_NAME,
-                Consumed.with(Serdes.String(), mobileUsageSerde)
+                Consumed.with(Serdes.String(), mobileUsageSerde2)
+                //Consumed.with(Serdes.String(), mobileUsageSerde)
                        .withTimestampExtractor(timeExtractor)
                 );
 
 
       //displayMobileUsageRecords(lineStream);
 
-        //displayCountByUser(lineStream);
-       displayCountByUserWithWindow(lineStream, TimeUnit.SECONDS.toSeconds(60));
+      //  displayCountByUser(lineStream);
+       //displayCountByUserWithWindow(lineStream, TimeUnit.SECONDS.toSeconds(60));
+
+       displayTotalMobileUsageByUserUsingAggregate(lineStream);
 
         Topology topology = builder.build();
         log.info("topology: "  + topology.describe().toString());

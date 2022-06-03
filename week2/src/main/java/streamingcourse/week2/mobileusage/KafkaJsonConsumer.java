@@ -71,6 +71,14 @@ public class KafkaJsonConsumer {
         return props;
     }
 
+    /**
+     * For each partition, reset the partition offset to the beginning.  The partition assignment metadata
+     * is retrieved from the broker.
+     *
+     * @param consumer
+     * @param retry_count
+     * @param waitDuration
+     */
     private static void resetPartitionOffset(KafkaConsumer consumer, int retry_count, Duration waitDuration) {
         System.out.printf("--- resetPartitionOffset with retry count of %d and wait duration of  %d ms ---",
                 retry_count, waitDuration.toMillis());

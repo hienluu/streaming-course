@@ -29,6 +29,10 @@ public class MobileUsage {
         return userName;
     }
 
+    public long getBytesUsed() {
+        return bytesUsed;
+    }
+
     @Override
     public String toString() {
         StringJoiner joiner = new StringJoiner(",", "[", "]");
