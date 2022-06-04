@@ -104,7 +104,9 @@ kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29
 # run the KStreamWordCount application
 # if needed, reset the offset of the KStreamWordCount application using the command below to process
 # words from the beginning
-kafka-streams-application-reset.sh --application-id kstreams-wordcount-app --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 --input-topics wordcount-input
+kafka-streams-application-reset.sh --application-id kstreams-wordcount-app \
+                                   --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 \
+                                   --input-topics wordcount-input
 
 
 # produce messages to week2-wordcount-input for

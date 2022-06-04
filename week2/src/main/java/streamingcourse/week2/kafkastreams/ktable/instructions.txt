@@ -1,0 +1,42 @@
+# ================= instructions for KTable example ====================
+# make sure Kafka cluster is up and running
+
+# log into docker instance
+docker exec -it kafka-broker1 bash
+
+# create a topic called "user-dept" with 3 partitions and 2 replications using Kafdrop or command line
+kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+                 --topic streaming.week2.user-dept \
+                 --partitions 3 \
+                 --replication-factor 2
+
+# Run the KTableUserDept example from the IDE
+
+
+# generate data using kafka producer using ":" as the key and value delimiter
+kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 \
+                          --topic streaming.week2.user-dept \
+                           --property parse.key=true \
+                           --property key.separator=":"
+
+# enter the following line in the console
+john:it
+mary:engr
+jeff:engr
+jane:it
+# at this point, it has 2 and engr has 2
+# now switch jeff from engr to it by entering the line below
+# and observe that the count for engr has decreased by 1 and the count for it is increased by one
+jeff:it
+
+
+# if needed to reset the
+kafka-streams-application-reset.sh --application-id KTableUserDept-app \
+                                   --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 \
+                                   --input-topics streaming.week2.user-dept
+
+# list topics - should see three partitions for topic streaming.week2.tweets
+kafka-topics.sh --zookeeper zookeeper:2181 --list
+
+# if you ever would like to delete a topic to restart from scratch
+kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic streaming.week2.user-dept

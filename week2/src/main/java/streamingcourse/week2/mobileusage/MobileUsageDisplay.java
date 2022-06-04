@@ -10,7 +10,7 @@ import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import streamingcourse.week2.kafkastreams.KStreamDisplay;
+import streamingcourse.week2.kafkastreams.stateless.KStreamDisplay;
 
 import java.time.Duration;
 import java.util.Properties;
