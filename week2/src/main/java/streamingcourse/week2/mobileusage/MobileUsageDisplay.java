@@ -15,9 +15,8 @@ import streamingcourse.week2.kafkastreams.KStreamDisplay;
 import java.time.Duration;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
-import static streamingcourse.week2.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
+import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
 
 /**
  * Example of performing streaming analytics of the mobile usage data

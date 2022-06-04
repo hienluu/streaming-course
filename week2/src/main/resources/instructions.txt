@@ -33,26 +33,26 @@ kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29
     --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer \
     --property value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
 
-# reset partition off set to the earliest for consumer group id "streamingcourse.week2.basic.KafkaSimpleTweetConsumer"
+# reset partition off set to the earliest for consumer group id "streamingcourse.week2.kafkamessaging.KafkaSimpleTweetConsumer"
 kafka-consumer-groups.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
  --execute --reset-offsets \
- --group streamingcourse.week2.basic.KafkaSimpleTweetConsumer \
+ --group streamingcourse.week2.kafkamessaging.KafkaSimpleTweetConsumer \
  --topic streaming.week2.tweets \
  --to-earliest
 
 # can confirm using the kafka drop UI, the Consumer Offset column should contain 0 for each partition
-http://localhost:9000/consumer/streamingcourse.week2.basic.KafkaSimpleTweetConsumer
+http://localhost:9000/consumer/streamingcourse.week2.kafkamessaging.KafkaSimpleTweetConsumer
 
-# reset partition off set to the earliest for consumer group id "streamingcourse.week2.basic.KafkaConsumerGroupTweetConsumer"
+# reset partition off set to the earliest for consumer group id "streamingcourse.week2.kafkamessaging.KafkaConsumerGroupTweetConsumer"
 kafka-consumer-groups.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
   --execute --reset-offsets \
-  --group streamingcourse.week2.basic.KafkaConsumerGroupTweetConsumer \
+  --group streamingcourse.week2.kafkamessaging.KafkaConsumerGroupTweetConsumer \
   --topic streaming.week2.tweets \
   --to-earliest
 
 
 # can confirm using the kafka drop UI, the Consumer Offset column should contain 0 for each partition
-http://localhost:9000/consumer/streamingcourse.week2.basic.KafkaConsumerGroupTweetConsumer
+http://localhost:9000/consumer/streamingcourse.week2.kafkamessaging.KafkaConsumerGroupTweetConsumer
 
 # =============================================================================
 # ===================== Kafka Streams related =================================

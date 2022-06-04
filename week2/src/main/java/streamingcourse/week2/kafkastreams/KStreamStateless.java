@@ -12,7 +12,7 @@ import org.apache.kafka.streams.kstream.Printed;
 
 import java.util.Properties;
 
-import static streamingcourse.week2.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
+import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
 
 /**
  * Examples of stateless operators

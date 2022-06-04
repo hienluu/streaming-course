@@ -1,4 +1,4 @@
-package streamingcourse.week2;
+package streamingcourse.common;
 
 public interface KafkaCommonProperties {
     public static final String TWEETS_TOPIC_NAME = "streaming.week2.tweets";

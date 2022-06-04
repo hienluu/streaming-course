@@ -1,9 +1,10 @@
-package streamingcourse.week2.mobileusage;
+package streamingcourse.week2.kafkamessaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Deserializer;
+import streamingcourse.week2.mobileusage.MobileUsage;
 
 import java.util.Map;
 

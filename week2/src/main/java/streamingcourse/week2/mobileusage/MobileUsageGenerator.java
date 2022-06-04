@@ -8,8 +8,10 @@ import java.util.*;
 
 public class MobileUsageGenerator {
     private  List<String> userNameList;
+    private  List<String> deptList;
     private Faker faker = new Faker();
     private Random userIdRandomGen = new Random();
+    private Random deptRandomGen = new Random();
     private Random byteUsedRandomGen = new Random();
     private Random timeRandomGen = new Random();
 
@@ -24,11 +26,16 @@ public class MobileUsageGenerator {
                 "onetimer", "skywalker", "theman", "walker", "flyer", "hiker",
                 "theone", "gamer", "justdoit", "drinker", "whoami", "youareit");
 
+        deptList = Arrays.asList("it", "ds", "data", "hr", "fin");
+
         clock = Instant.now().minus(numDaysInThePast, ChronoUnit.DAYS);
     }
 
     public MobileUsage next() {
         MobileUsage mobileUsage = new MobileUsage();
+
+        mobileUsage.dept = deptList.get(deptRandomGen.nextInt(deptList.size()));
+
         int randomUserIdx = userIdRandomGen.nextInt(userNameList.size());
         mobileUsage.userName = userNameList.get(randomUserIdx);
         mobileUsage.bytesUsed = byteUsedRandomGen.nextInt(1000) + 35;

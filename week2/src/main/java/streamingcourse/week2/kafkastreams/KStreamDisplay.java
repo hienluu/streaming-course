@@ -13,8 +13,8 @@ import java.util.Properties;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import static streamingcourse.week2.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
-import static streamingcourse.week2.KafkaCommonProperties.TWEETS_TOPIC_NAME;
+import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
+import static streamingcourse.common.KafkaCommonProperties.TWEETS_TOPIC_NAME;
 
 /**
  * Simple example of using Kafka Streams to display the content of a topic.

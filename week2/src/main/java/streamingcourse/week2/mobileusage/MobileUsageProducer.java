@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import static streamingcourse.week2.KafkaCommonProperties.*;
+import static streamingcourse.common.KafkaCommonProperties.*;
 
 /**
  * This Kafka producer produces Kafka records using custom type MobileUsage.

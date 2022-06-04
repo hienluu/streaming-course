@@ -1,4 +1,4 @@
-package streamingcourse.week2.basic;
+package streamingcourse.week2.kafkamessaging;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static streamingcourse.week2.PrintColorCode.*;
-import static streamingcourse.week2.KafkaCommonProperties.*;
+import static streamingcourse.common.KafkaCommonProperties.*;
 
 /**
  * This example shows how to start multiple consumers for a consumer group.

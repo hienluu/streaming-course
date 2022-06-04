@@ -5,14 +5,12 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.KGroupedStream;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Predicate;
-import org.apache.kafka.streams.kstream.Printed;
 
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import static streamingcourse.week2.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
+import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
 
 /**
  * Examples of stateful operators

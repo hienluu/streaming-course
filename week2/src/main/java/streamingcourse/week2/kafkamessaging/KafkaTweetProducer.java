@@ -1,4 +1,4 @@
-package streamingcourse.week2.basic;
+package streamingcourse.week2.kafkamessaging;
 
 
 import com.github.javafaker.Faker;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import static streamingcourse.week2.KafkaCommonProperties.*;
+import static streamingcourse.common.KafkaCommonProperties.*;
 
 /**
  * Simple Kafka producer send messages in string format (key,value)

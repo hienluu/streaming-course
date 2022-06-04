@@ -6,7 +6,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KTable;
 
 
 import java.util.Arrays;
@@ -14,7 +13,7 @@ import java.util.Properties;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import static streamingcourse.week2.KafkaCommonProperties.*;
+import static streamingcourse.common.KafkaCommonProperties.*;
 
 public class KStreamWordCount {
     public static final String WORD_COUNT_INPUT_TOPIC_NAME = "week2-wordcount-input";
