@@ -1,12 +1,17 @@
-package streamingcourse.week2.kafkamessaging;
+package streamingcourse.week2.mobileusage;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import streamingcourse.week2.mobileusage.MobileUsage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import streamingcourse.week2.kafkamessaging.KafkaSimpleTweetConsumer;
+import streamingcourse.week2.kafkamessaging.MobileUsageDeserializer;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -17,9 +22,10 @@ import static streamingcourse.week2.PrintColorCode.ansiYellow;
 
 public class KafkaJsonConsumer {
     private static final String BOOTSTRAP_SERVER_LIST = "localhost:9092,localhost:9093,localhost:9094";
-    private static final String KAFKA_TOPIC_TO_CONSUME_FROM = "streaming.week2.mobile";
+    private static final String KAFKA_TOPIC_TO_CONSUME_FROM = MobileUsageProducer.KAFKA_TOPIC_TO_SEND_TO;
     private static final String GROUP_ID = KafkaJsonConsumer.class.getName();
 
+    private static Logger log = LogManager.getLogger(KafkaJsonConsumer.class.getName());
 
     public static void main(String[] args) {
         System.out.println(KafkaSimpleTweetConsumer.class.getName());
@@ -28,10 +34,10 @@ public class KafkaJsonConsumer {
 
         boolean start_from_beginning = true;
 
-        System.out.println(" =======================  consumer information =========================");
-        System.out.println("Consuming group: " + GROUP_ID + " subscribe to topic: " + KAFKA_TOPIC_TO_CONSUME_FROM);
-        System.out.println("start_from_beginning: " + start_from_beginning);
-        System.out.println(" =======================  consumer information =========================");
+        log.info(" =======================  consumer information =========================");
+        log.info("Consuming group: " + GROUP_ID + " subscribe to topic: " + KAFKA_TOPIC_TO_CONSUME_FROM);
+        log.info("start_from_beginning: " + start_from_beginning);
+        log.info(" =======================  consumer information =========================");
 
         KafkaConsumer<String, MobileUsage> consumer = new KafkaConsumer<String, MobileUsage>(props);
         consumer.subscribe(Collections.singletonList(KAFKA_TOPIC_TO_CONSUME_FROM));
@@ -45,13 +51,18 @@ public class KafkaJsonConsumer {
 
         Duration timeout = Duration.ofMillis(250);
         try {
+            ObjectMapper objectMapper =
+                    JsonMapper.builder()
+                            .build().findAndRegisterModules();
+
             System.out.println("*** going into the poll loop ***");
             while (true) {
                 ConsumerRecords<String, MobileUsage> messages = consumer.poll(timeout);
 
                 for (ConsumerRecord<String, MobileUsage> msg : messages) {
-                    System.out.printf("%s topic: %s, partition: %d, offset: %d, key: %s, value: %s\n",
-                            ansiYellow(), msg.topic(), msg.partition(), msg.offset(), msg.key(), msg.value());
+                    String valueInJson = objectMapper.writeValueAsString(msg.value());
+                    log.info(String.format("%s topic: %s, partition: %d, offset: %d, record: %s:%s",
+                            ansiYellow(), msg.topic(), msg.partition(), msg.offset(), msg.key(), valueInJson));
                 }
             }
         }  catch (Exception e) {

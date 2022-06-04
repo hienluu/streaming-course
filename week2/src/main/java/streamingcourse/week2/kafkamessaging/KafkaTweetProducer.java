@@ -18,7 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import static streamingcourse.common.KafkaCommonProperties.*;
 
 /**
- * Simple Kafka producer send messages in string format (key,value)
+ * Simple Kafka producer that sends quotes using Faker.  The messages are in string format (key,value)
  *
  * It will send NUM_MSGS_TO_SEND to Kafka topic KAFKA_TOPIC_TO_SEND_TO.
  * It will sleep for SLEEP_TIME_IN_MS between each message
@@ -35,25 +35,19 @@ public class KafkaTweetProducer {
 
         //Setup Properties for Kafka Producer
         Properties kafkaProps = new Properties();
-
         kafkaProps.put(ProducerConfig.CLIENT_ID_CONFIG, "KafkaTweetProducer");
-
         //List of brokers to connect to
         kafkaProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER_LIST);
-
         //Serializer class used to convert Keys to Byte Arrays
         kafkaProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KAFKA_STRING_SERIALIZER);
-
         //Serializer class used to convert Messages to Byte Arrays
         kafkaProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KAFKA_STRING_SERIALIZER);
-
-
 
         //Create a Kafka producer from configuration
         KafkaProducer<String, String> simpleProducer = new KafkaProducer<String, String>(kafkaProps);
 
         //Publish NUM_MSGS_TO_SEND messages at SLEEP_TIME_IN_MS second intervals, with a random key
-        try{
+        try {
             int startKey = (new Random()).nextInt(100) ;
             LOGGER.info("startKey: " + startKey);
             LOGGER.info("NUM_MSGS_TO_SEND: " + NUM_MSGS_TO_SEND);

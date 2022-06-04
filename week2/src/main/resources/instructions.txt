@@ -16,7 +16,7 @@ kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:290
 kafka-topics.sh --zookeeper zookeeper:2181 --list
 
 # if you ever would like to delete a topic to restart from scratch
-kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic streaming.week2.tweets
+kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic <topic name>
 
 # describe a topic to see # of partitions and replicas
 kafka-topics.sh --zookeeper zookeeper:2181 --topic streaming.week2.tweets --describe
@@ -54,92 +54,18 @@ kafka-consumer-groups.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:290
 # can confirm using the kafka drop UI, the Consumer Offset column should contain 0 for each partition
 http://localhost:9000/consumer/streamingcourse.week2.kafkamessaging.KafkaConsumerGroupTweetConsumer
 
-# =============================================================================
-# ===================== Kafka Streams related =================================
-# =============================================================================
-
-# ========== KStreamDisplay simple example of using Kafka Streams to display the tweets in topic streaming.week2.tweets ==============
-# run the KStreamDisplay application from the editor, expect to see the tweets in the run output console.
-
-# if you would like to run it again and read the tweets from the beginning, then execute the command
-# to reset the offset of this application for topic streaming.week2.tweets
-kafka-streams-application-reset.sh --application-id KStreamDisplay-app --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 --input-topics streaming.week2.tweets
-
-
-# ======================================== WORD COUNT EXAMPLE  ======================================================
-# ========== The word count example reads words from week2-wordcount-input.  The words will be produced using kafka-console-producer.sh
-# We will use Kafka Stream KStreamWordCount application to perform word count and write the result to topic week2-wordcount-output
-# We will use kafka-console-consumer.sh to display the word count result
-# ====================================================================================================
-# create a topic to read messages from to perform word count
-# you can do this from Kafkadrop UI as well
-kafka-topics.sh --create \
-    --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
-    --replication-factor 1 \
-    --partitions 2 \
-    --topic week2-wordcount-input
-
-
-# create a topic to send word count output to
-kafka-topics.sh --create \
-    --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
-    --replication-factor 1 \
-    --partitions 1 \
-    --topic week2-wordcount-output
-
-# verify the input and output topic using Kafdrop UI or commands below
-kafka-topics.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
-    --describe -topic week2-wordcount-input
-
-kafka-topics.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
-    --describe -topic week2-wordcount-output
-
-# consume the word count output
-kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
-    --topic week2-wordcount-output \
-    --from-beginning \
-    --property print.key=true
-
-
-# run the KStreamWordCount application
-# if needed, reset the offset of the KStreamWordCount application using the command below to process
-# words from the beginning
-kafka-streams-application-reset.sh --application-id kstreams-wordcount-app \
-                                   --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 \
-                                   --input-topics wordcount-input
-
-
-# produce messages to week2-wordcount-input for
-kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 \
-     --topic week2-wordcount-input
-
-# ====================================================================================================
-# ====================== Working with mobile usage example related  =================================
-# Create a Kafka topic using command line
-kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
-                 --topic streaming.week2.mobile_usage \
-                 --partitions 3 \
-                 --replication-factor 2
-
-# if you ever need to delete the topic
-kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic streaming.week2.mobile_usage
-
-# run MobileUsageProducer
-
-# run MobileUsageDisplay
-
-# reset the offset (WARNING: make sure to stop the running streaming application first)
-kafka-streams-application-reset.sh --application-id MobileUsageDisplay-app --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 --input-topics streaming.week2.mobile_usage
 
 # =============================================================================
-# when things are messed up and you want to reset everything
+# Command to clean up states when things went haywire
 # =============================================================================
 
-# reset the internal state
+# reset the internal state of a Kafka Streams application
 # https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Streams+Application+Reset+Tool
 # if you see the following error while running the command line, just run it again
 # "Make sure to stop all running application instances before running the reset tool
-kafka-streams-application-reset.sh --application-id kstreams-wordcount-app --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 --input-topics wordcount-input
+kafka-streams-application-reset.sh --application-id <application id> \
+            --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 \
+            --input-topics <topic name>
 
 
 # when encountered an error "Tried to lookup lag for unknown task 1_0"

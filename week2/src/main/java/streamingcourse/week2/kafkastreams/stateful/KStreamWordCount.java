@@ -8,25 +8,26 @@ import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.KGroupedStream;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
+import org.apache.logging.log4j.LogManager;
 
 
 import java.util.Arrays;
 import java.util.Properties;
-import java.util.logging.Logger;
+
 import java.util.regex.Pattern;
 
 import static streamingcourse.common.KafkaCommonProperties.*;
 
 public class KStreamWordCount {
+    private static org.apache.logging.log4j.Logger log = LogManager.getLogger(KStreamWordCount.class.getName());
+
     public static final String WORD_COUNT_INPUT_TOPIC_NAME = "week2-wordcount-input";
     public static final String WORD_COUNT_OUTPUT_TOPIC_NAME = "week2-wordcount-output";
 
-    private static Logger log = Logger.getLogger(KStreamWordCount.class.getName());
     public static void main(final String[] args) throws Exception {
-        System.out.println("============== KStreamWordCount.main ============= ");
-        System.out.println("reading lines from:  " + WORD_COUNT_INPUT_TOPIC_NAME);
-        System.out.println("writing word count results to:  " + WORD_COUNT_OUTPUT_TOPIC_NAME);
-        System.out.println("============== KStreamWordCount.main ============= ");
+        log.info("============== KStreamWordCount.main ============= ");
+        log.info("reading lines from:  " + WORD_COUNT_INPUT_TOPIC_NAME);
+        log.info("writing word count results to:  " + WORD_COUNT_OUTPUT_TOPIC_NAME);
 
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "kstreams-wordcount-app");
@@ -46,6 +47,8 @@ public class KStreamWordCount {
         // For illustrative purposes we disable record caches.
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
 
+        log.info("APPLICATION_ID_CONFIG:  " + props.get(StreamsConfig.APPLICATION_ID_CONFIG));
+
         StreamsBuilder builder = new StreamsBuilder();
         // create a stream from the WORD_COUNT_INPUT_TOPIC_NAME
         KStream<String, String> lineStream = builder.stream(WORD_COUNT_INPUT_TOPIC_NAME);
@@ -63,19 +66,18 @@ public class KStreamWordCount {
         KTable<String,Long> wordCountTable = groupByGroupedStream.count();
 
         // write the result to output topic
-        wordCountTable.toStream().to(WORD_COUNT_OUTPUT_TOPIC_NAME);
+        wordCountTable.toStream()
+                .mapValues(value -> Long.toString(value))
+                .to(WORD_COUNT_OUTPUT_TOPIC_NAME);
 
-        //        .mapValues(value -> Long.toString(value))
-
-        System.out.println("Building topology");
+        log.info("Building topology");
         Topology topology = builder.build();
-        System.out.println("topology: "  + topology.describe().toString());
+        log.info("topology: "  + topology.describe().toString());
         KafkaStreams streams = new KafkaStreams(topology, props);
 
         // Now run the processing topology via `start()` to begin processing its input data.
-        System.out.println("Start running the topology");
+        log.info("Start running the topology");
         streams.cleanUp();
-
         streams.start();
 
         // shutdown hook to properly and gracefully close the streams application

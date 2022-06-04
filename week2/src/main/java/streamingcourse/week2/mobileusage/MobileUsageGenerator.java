@@ -1,14 +1,17 @@
 package streamingcourse.week2.mobileusage;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.javafaker.Faker;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class MobileUsageGenerator {
     private  List<String> userNameList;
-    private  List<String> deptList;
+    private  Map<String, String> deptMap;
     private Faker faker = new Faker();
     private Random userIdRandomGen = new Random();
     private Random deptRandomGen = new Random();
@@ -22,11 +25,20 @@ public class MobileUsageGenerator {
         if (numDaysInThePast < 1) {
             throw  new IllegalArgumentException("numDaysInThePast can't be less than 1");
         }
-        userNameList = Arrays.asList("jb", "mjane", "skunky", "tweetie", "bobby", "dreamer",
-                "onetimer", "skywalker", "theman", "walker", "flyer", "hiker",
-                "theone", "gamer", "justdoit", "drinker", "whoami", "youareit");
 
-        deptList = Arrays.asList("it", "ds", "data", "hr", "fin");
+        userNameList = Arrays.asList("jb", "mjane", "skunky",  "bobby", "dreamer",
+                "onetimer", "skywalker", "theman",  "flyer", "hiker",
+                "theone", "gamer", "justdoit",  "whoami", "youareit");
+
+        List<String> deptList = Arrays.asList("it","engr","finance", "hr");
+
+        deptMap = new HashMap<>(userNameList.size());
+        // popular the deptMap
+        IntStream.range(0, userNameList.size()).forEach(idx -> {
+            deptMap.put(userNameList.get(idx), deptList.get(idx % deptList.size()));
+        });
+
+
 
         clock = Instant.now().minus(numDaysInThePast, ChronoUnit.DAYS);
     }
@@ -34,10 +46,9 @@ public class MobileUsageGenerator {
     public MobileUsage next() {
         MobileUsage mobileUsage = new MobileUsage();
 
-        mobileUsage.dept = deptList.get(deptRandomGen.nextInt(deptList.size()));
-
         int randomUserIdx = userIdRandomGen.nextInt(userNameList.size());
         mobileUsage.userName = userNameList.get(randomUserIdx);
+        mobileUsage.dept = deptMap.get(mobileUsage.userName);
         mobileUsage.bytesUsed = byteUsedRandomGen.nextInt(1000) + 35;
 
         // timeStamp is advancing from the clock at the minimum of 30 seconds
@@ -50,11 +61,17 @@ public class MobileUsageGenerator {
         return mobileUsage;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         MobileUsageGenerator gen = new MobileUsageGenerator(5);
+        ObjectMapper objectMapper =
+                JsonMapper.builder()
+                        .build().findAndRegisterModules();
 
-        for (int i = 1; i < 50; i++) {
-            System.out.println(i + ": " + gen.next());
+        for (int i = 1; i < 10; i++) {
+            MobileUsage mobileUsage = gen.next();
+            System.out.println(i + ": " + mobileUsage);
+            String valueInJson = objectMapper.writeValueAsString(mobileUsage);
+            System.out.println(i + ": " + valueInJson);
         }
     }
 }

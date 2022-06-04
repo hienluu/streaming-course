@@ -1,0 +1,56 @@
+# ======================================== WORD COUNT EXAMPLE  ======================================================
+# The word count example reads words from week2-wordcount-input and sends the result to week2-wordcount-output topic
+# The words will be produced using kafka-console-producer.sh
+# Use KStreamWordCount application to perform word count. It will write the result to topic week2-wordcount-output
+# Use kafka-console-consumer.sh to display the word count result
+# We two terminals and each one needs to log into a docker container
+# ===================================================================================================================
+
+# make sure the Kafka is up, not if follow the instructions in instructions.txt in common/src/main/resources/instruction.txt
+
+# log into docker kafka-broker1 container
+docker exec -it kafka-broker1 bash
+
+# create 2 topics: one for send messages to and the other one for send word count result to
+# you can do this from Kafkadrop UI or use command line below
+kafka-topics.sh --create \
+    --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+    --replication-factor 1 \
+    --partitions 2 \
+    --topic week2-wordcount-input
+
+
+# create a topic to send word count output to
+kafka-topics.sh --create \
+    --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic week2-wordcount-output
+
+# verify the input and output topic using Kafdrop UI or commands below
+kafka-topics.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+    --describe -topic week2-wordcount-input
+
+kafka-topics.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+    --describe -topic week2-wordcount-output
+
+# use a terminal to display the word count result
+kafka-console-consumer.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+    --topic week2-wordcount-output \
+    --from-beginning \
+    --property print.key=true
+
+
+# run the KStreamWordCount application from the IDE to compute the word count
+
+# if needed, reset the offset of the KStreamWordCount application using the command below to process
+# words from the beginning
+kafka-streams-application-reset.sh --application-id kstreams-wordcount-app \
+                                   --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 \
+                                   --input-topics wordcount-input
+
+
+# use another terminal to produce messages to week2-wordcount-input for KStreamWordCount to read from
+# type the command below and once the prompt is ready,  enter a few words and hit enter key
+kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 \
+     --topic week2-wordcount-input

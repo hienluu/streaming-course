@@ -1,5 +1,7 @@
 package streamingcourse.week2.mobileusage;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -22,18 +24,21 @@ import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST
  * Example of performing streaming analytics of the mobile usage data
  *
  * Resource:
- * - When encountered class cast exception when using supress()
+ * - When encountered class cast exception when using suppress()
  *   https://peaku.co/questions/29703-kafkastreams:-obtencion-de-los-resultados-finales-de-la-ventana
  */
 public class MobileUsageDisplay {
     public static final String MOBILE_USAGE_TOPIC_NAME = MobileUsageProducer.KAFKA_TOPIC_TO_SEND_TO;
 
-    private static Logger log = LogManager.getLogger(KStreamDisplay.class.getName());
+    private static Logger log = LogManager.getLogger(MobileUsageDisplay.class.getName());
 
     private static void displayMobileUsageRecords(KStream<String, MobileUsage> lineStream) {
         log.info("======== peeking ========");
-       // lineStream.peek((key, value) -> log.info(String.format("key: %s, value: %s", key, value)));
-        lineStream.print(Printed.<String, MobileUsage>toSysOut().withLabel("Mobile Usage"));
+        ObjectMapper objectMapper =
+                JsonMapper.builder()
+                        .build().findAndRegisterModules();
+         lineStream.peek((key, value) -> log.info(String.format("%s:%s", key, value)));
+        //lineStream.print(Printed.<String, MobileUsage>toSysOut().withLabel("Mobile Usage"));
     }
 
     private static void displayCountByUser(KStream<String, MobileUsage> lineStream) {
@@ -84,8 +89,9 @@ public class MobileUsageDisplay {
                         .unbounded().shutDownWhenFull()))
                 ;
 
-        userCount.toStream().peek(
-                (key, value) -> log.info(String.format("window: %s-%s key: %s, value: %s",
+        userCount.toStream().foreach(
+                (key, value) -> log.info(String.format("window: %d %s-%s key: %s, value: %s",
+                        key.window().hashCode(),
                         key.window().startTime(),
                         key.window().endTime(),
                         key.key(),
@@ -95,8 +101,7 @@ public class MobileUsageDisplay {
     }
     public static void main(final String[] args) throws Exception {
         log.info("============== MobileUsageDisplay.main ============= ");
-        log.info("reading lines from:  " + MOBILE_USAGE_TOPIC_NAME);
-        log.info("===================================================== ");
+        log.info("reading messages from topic:  " + MOBILE_USAGE_TOPIC_NAME);
 
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "MobileUsageDisplay-app");
@@ -117,6 +122,8 @@ public class MobileUsageDisplay {
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
 
+        log.info("APPLICATION_ID_CONFIG:  " + props.get(StreamsConfig.APPLICATION_ID_CONFIG));
+
         MobileUsageTimeExtractor timeExtractor = new MobileUsageTimeExtractor();
 
         StreamsBuilder builder = new StreamsBuilder();
@@ -130,12 +137,12 @@ public class MobileUsageDisplay {
                 );
 
 
-      //displayMobileUsageRecords(lineStream);
+      displayMobileUsageRecords(lineStream);
 
       //  displayCountByUser(lineStream);
        //displayCountByUserWithWindow(lineStream, TimeUnit.SECONDS.toSeconds(60));
 
-       displayTotalMobileUsageByUserUsingAggregate(lineStream);
+     //  displayTotalMobileUsageByUserUsingAggregate(lineStream);
 
         Topology topology = builder.build();
         log.info("topology: "  + topology.describe().toString());
