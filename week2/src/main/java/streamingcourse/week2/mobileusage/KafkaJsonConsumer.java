@@ -13,6 +13,7 @@ import streamingcourse.common.KafkaCommonProperties;
 import streamingcourse.week2.common.MyJsonSerializer;
 import streamingcourse.week2.kafkamessaging.KafkaSimpleTweetConsumer;
 import streamingcourse.week2.kafkamessaging.MobileUsageDeserializer;
+import streamingcourse.week2.mobileusage.data.MobileUsageProducer;
 import streamingcourse.week2.mobileusage.model.MobileUsage;
 
 import java.time.Duration;

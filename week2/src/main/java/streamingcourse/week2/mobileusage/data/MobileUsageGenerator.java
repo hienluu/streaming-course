@@ -36,7 +36,7 @@ public class MobileUsageGenerator {
                 "onetimer", "skywalker", "theman",  "flyer", "hiker",
                 "theone", "gamer", "justdoit",  "whoami", "youareit");
 
-        List<DeptInfo> deptInfoList =  DeptGenerator.getInstance().getDeptInfoList();
+        List<DeptInfo> deptInfoList =  DepartmentInfoGenerator.getInstance().getDeptInfoList();
 
         List<Integer> deptIdList = Arrays.asList(101, 105, 201, 205, 301, 305);
 

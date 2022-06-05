@@ -12,6 +12,7 @@ import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import streamingcourse.week2.mobileusage.data.MobileUsageProducer;
 import streamingcourse.week2.mobileusage.model.MobileUsage;
 import streamingcourse.week2.mobileusage.serdes.MobileUsageAppSerdes;
 
@@ -36,9 +37,7 @@ public class MobileUsageDisplay {
 
     private static void displayMobileUsageRecords(KStream<String, MobileUsage> lineStream) {
         log.info("======== peeking ========");
-        ObjectMapper objectMapper =
-                JsonMapper.builder()
-                        .build().findAndRegisterModules();
+
          lineStream.peek((key, value) -> log.info(String.format("%s:%s", key, value)));
         //lineStream.print(Printed.<String, MobileUsage>toSysOut().withLabel("Mobile Usage"));
     }
@@ -104,8 +103,8 @@ public class MobileUsageDisplay {
         log.info("reading messages from topic:  " + MOBILE_USAGE_TOPIC_NAME);
 
         Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "MobileUsageDisplay-app");
-        props.put(StreamsConfig.CLIENT_ID_CONFIG, "MobileUsageDisplay-client");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG,  MobileUsageDisplay.class.getSimpleName() +  "-app");
+        props.put(StreamsConfig.CLIENT_ID_CONFIG, MobileUsageDisplay.class.getSimpleName() + "-client");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER_LIST);
 
 

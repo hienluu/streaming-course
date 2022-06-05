@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class DeptGenerator {
-    private static DeptGenerator instance;
+public class DepartmentInfoGenerator {
+    private static DepartmentInfoGenerator instance;
     private List<DeptInfo> deptInfoList;
-    private DeptGenerator() {
+    private DepartmentInfoGenerator() {
         deptInfoList = new ArrayList<>();
         readFromFile();
     }
@@ -37,17 +37,17 @@ public class DeptGenerator {
         return deptInfoList;
     }
 
-    public static DeptGenerator getInstance() {
+    public static DepartmentInfoGenerator getInstance() {
         if (instance == null) {
             // yes, not thread safe
-            instance = new DeptGenerator();
+            instance = new DepartmentInfoGenerator();
         }
         return instance;
     }
 
     public static  void  main(String[] args) {
         System.out.println("======= DeptGenerator.main ========");
-        List<DeptInfo> deptInfos =  DeptGenerator.getInstance().getDeptInfoList();
+        List<DeptInfo> deptInfos =  DepartmentInfoGenerator.getInstance().getDeptInfoList();
         deptInfos.stream().forEach(deptInfo -> {
             System.out.println(deptInfo);
         });

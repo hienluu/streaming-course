@@ -1,4 +1,4 @@
-package streamingcourse.week2.mobileusage;
+package streamingcourse.week2.mobileusage.data;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,7 +17,6 @@ import java.util.concurrent.Future;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import streamingcourse.week2.common.KJsonSerializer;
-import streamingcourse.week2.mobileusage.data.MobileUsageGenerator;
 import streamingcourse.week2.mobileusage.model.MobileUsage;
 
 import static streamingcourse.common.KafkaCommonProperties.*;
@@ -66,12 +65,12 @@ public class MobileUsageProducer {
                 MobileUsage mobileUsage = generator.next();
 
                 //Create a producer Record
-                ProducerRecord<String, MobileUsage> bobKafkaRecord =
+                ProducerRecord<String, MobileUsage> kafkaRecord =
                         new ProducerRecord<String, MobileUsage>(
                                 KAFKA_TOPIC_TO_SEND_TO,    //Topic name
                                 mobileUsage.userName,  mobileUsage);
 
-                Future<RecordMetadata> response = simpleProducer.send(bobKafkaRecord);
+                Future<RecordMetadata> response = simpleProducer.send(kafkaRecord);
                 printRecordMetaData(response.get());
 
                 rowCount++;
