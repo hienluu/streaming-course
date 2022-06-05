@@ -1,6 +1,7 @@
 package streamingcourse.week2.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Deserializer;
 import java.util.Map;
@@ -12,6 +13,9 @@ public class KJsonDeserializer<T> implements Deserializer<T> {
     public static final String VALUE_CLASS_NAME_CONFIG = "value.class.name";
 
     public KJsonDeserializer() {
+        /*objectMapper =
+                JsonMapper.builder()
+                        .build().findAndRegisterModules(); */
         objectMapper.findAndRegisterModules();
     }
 

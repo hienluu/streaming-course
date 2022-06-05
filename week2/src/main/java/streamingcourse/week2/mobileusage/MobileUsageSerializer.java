@@ -7,8 +7,11 @@ import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Serializer;
 
 import java.util.Map;
-//import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+/**
+ * @deprecated see @code{KJsonDeserializer}
+ * @param <T>
+ */
 public class MobileUsageSerializer <T> implements Serializer<T> {
 
     private ObjectMapper objectMapper;
@@ -19,8 +22,6 @@ public class MobileUsageSerializer <T> implements Serializer<T> {
         objectMapper =
                 JsonMapper.builder()
                         .build().findAndRegisterModules();
-                        // .registerModule(new JavaTimeModule())
-                        //.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
     }
 
     @Override

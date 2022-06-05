@@ -12,11 +12,11 @@ import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import streamingcourse.week2.kafkastreams.stateless.KStreamDisplay;
 
 import java.time.Duration;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
 
@@ -85,13 +85,11 @@ public class MobileUsageDisplay {
                 .groupByKey()
                 .windowedBy(tumblingWindow)
                 .count(Materialized.with(Serdes.String(), Serdes.Long()))
-                .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig
-                        .unbounded().shutDownWhenFull()))
+                .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()))
                 ;
 
         userCount.toStream().foreach(
-                (key, value) -> log.info(String.format("window: %d %s-%s key: %s, value: %s",
-                        key.window().hashCode(),
+                (key, value) -> System.out.printf(String.format("window: [%s => %s] key: %s, value: %s\n",
                         key.window().startTime(),
                         key.window().endTime(),
                         key.key(),
@@ -128,7 +126,7 @@ public class MobileUsageDisplay {
 
         StreamsBuilder builder = new StreamsBuilder();
 
-        MobileUsageSerde mobileUsageSerde = new MobileUsageSerde();
+        //MobileUsageSerde mobileUsageSerde = new MobileUsageSerde();
         Serde<MobileUsage> mobileUsageSerde2 = MobileUsageAppSerdes.MobileUsage();
         KStream<String, MobileUsage> lineStream = builder.stream(MOBILE_USAGE_TOPIC_NAME,
                 Consumed.with(Serdes.String(), mobileUsageSerde2)
@@ -137,10 +135,10 @@ public class MobileUsageDisplay {
                 );
 
 
-      displayMobileUsageRecords(lineStream);
+      //displayMobileUsageRecords(lineStream);
 
       //  displayCountByUser(lineStream);
-       //displayCountByUserWithWindow(lineStream, TimeUnit.SECONDS.toSeconds(60));
+      displayCountByUserWithWindow(lineStream, TimeUnit.SECONDS.toSeconds(300));
 
      //  displayTotalMobileUsageByUserUsingAggregate(lineStream);
 

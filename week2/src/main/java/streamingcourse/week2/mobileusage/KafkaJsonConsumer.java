@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
+import static streamingcourse.week2.PrintColorCode.ansiGreen;
 import static streamingcourse.week2.PrintColorCode.ansiYellow;
 
 public class KafkaJsonConsumer {
@@ -33,6 +34,7 @@ public class KafkaJsonConsumer {
         Properties props = createKafkaProperties();
 
         boolean start_from_beginning = true;
+        boolean printWithDetail = false;
 
         log.info(" =======================  consumer information =========================");
         log.info("Consuming group: " + GROUP_ID + " subscribe to topic: " + KAFKA_TOPIC_TO_CONSUME_FROM);
@@ -44,7 +46,7 @@ public class KafkaJsonConsumer {
 
         int retry_count = 5;
         if (start_from_beginning) {
-            resetPartitionOffset(consumer, retry_count, Duration.ofMillis(200));
+            resetPartitionOffset(consumer, retry_count, Duration.ofMillis(500));
         } else {
             System.out.printf("**** Didn't seek to the beginning of the partitions ****\n");
         }
@@ -61,8 +63,14 @@ public class KafkaJsonConsumer {
 
                 for (ConsumerRecord<String, MobileUsage> msg : messages) {
                     String valueInJson = objectMapper.writeValueAsString(msg.value());
-                    log.info(String.format("%s topic: %s, partition: %d, offset: %d, record: %s:%s",
-                            ansiYellow(), msg.topic(), msg.partition(), msg.offset(), msg.key(), valueInJson));
+                    if (printWithDetail) {
+                        System.out.printf("%s topic: %s, partition: %d, offset: %d, record: %s:%s\n",
+                                ansiYellow(), msg.topic(), msg.partition(), msg.offset(), msg.key(), valueInJson);
+                    } else {
+                        System.out.printf("%s%s:%s\n",
+                                ansiGreen(), msg.key(), valueInJson);
+
+                    }
                 }
             }
         }  catch (Exception e) {
