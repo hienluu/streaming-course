@@ -1,4 +1,4 @@
-package streamingcourse.week2.mobileusage;
+package streamingcourse.week2.mobileusage.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -9,8 +9,7 @@ import java.util.StringJoiner;
 public class MobileUsage {
     public String userName;
     public long bytesUsed;
-
-    public String dept;
+    public int deptId;
 
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
@@ -21,14 +20,15 @@ public class MobileUsage {
     public MobileUsage() {
     }
 
-    public MobileUsage(Instant ts, String userName, long bytesUsed) {
+    public MobileUsage(Instant ts, String userName, long bytesUsed, int deptId) {
         this.timeStamp = ts;
         this.userName = userName;
         this.bytesUsed = bytesUsed;
+        this.deptId = deptId;
     }
 
-    public String getDept() {
-        return dept;
+    public int getDeptId() {
+        return deptId;
     }
 
     public String getUserName() {
@@ -44,7 +44,7 @@ public class MobileUsage {
         StringJoiner joiner = new StringJoiner(",", "[", "]");
 
         joiner.add("userName=" + userName);
-        joiner.add("dept=" + dept);
+        joiner.add("deptId=" + deptId);
         joiner.add("bytesUsed=" + bytesUsed);
         joiner.add("timeStamp=" + timeStamp);
 
@@ -61,7 +61,7 @@ public class MobileUsage {
         }
         MobileUsage that = (MobileUsage) o;
         return userName.equals(that.userName) && bytesUsed == that.bytesUsed
-                && dept.equals(that.dept)
+                && deptId == that.deptId
                 && timeStamp.equals(that.timeStamp);
     }
 

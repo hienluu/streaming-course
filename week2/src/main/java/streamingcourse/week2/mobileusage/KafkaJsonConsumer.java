@@ -1,7 +1,6 @@
 package streamingcourse.week2.mobileusage;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -10,8 +9,11 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import streamingcourse.common.KafkaCommonProperties;
+import streamingcourse.week2.common.MyJsonSerializer;
 import streamingcourse.week2.kafkamessaging.KafkaSimpleTweetConsumer;
 import streamingcourse.week2.kafkamessaging.MobileUsageDeserializer;
+import streamingcourse.week2.mobileusage.model.MobileUsage;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -22,7 +24,7 @@ import static streamingcourse.week2.PrintColorCode.ansiGreen;
 import static streamingcourse.week2.PrintColorCode.ansiYellow;
 
 public class KafkaJsonConsumer {
-    private static final String BOOTSTRAP_SERVER_LIST = "localhost:9092,localhost:9093,localhost:9094";
+     private static final String BOOTSTRAP_SERVER_LIST = KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
     private static final String KAFKA_TOPIC_TO_CONSUME_FROM = MobileUsageProducer.KAFKA_TOPIC_TO_SEND_TO;
     private static final String GROUP_ID = KafkaJsonConsumer.class.getName();
 
@@ -53,16 +55,14 @@ public class KafkaJsonConsumer {
 
         Duration timeout = Duration.ofMillis(250);
         try {
-            ObjectMapper objectMapper =
-                    JsonMapper.builder()
-                            .build().findAndRegisterModules();
+            MyJsonSerializer myJsonSerializer = MyJsonSerializer.build();
 
             System.out.println("*** going into the poll loop ***");
             while (true) {
                 ConsumerRecords<String, MobileUsage> messages = consumer.poll(timeout);
 
                 for (ConsumerRecord<String, MobileUsage> msg : messages) {
-                    String valueInJson = objectMapper.writeValueAsString(msg.value());
+                    String valueInJson = myJsonSerializer.toJson(msg.value());
                     if (printWithDetail) {
                         System.out.printf("%s topic: %s, partition: %d, offset: %d, record: %s:%s\n",
                                 ansiYellow(), msg.topic(), msg.partition(), msg.offset(), msg.key(), valueInJson);

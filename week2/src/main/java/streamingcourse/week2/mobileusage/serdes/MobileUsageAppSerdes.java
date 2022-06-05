@@ -1,10 +1,11 @@
-package streamingcourse.week2.mobileusage;
+package streamingcourse.week2.mobileusage.serdes;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 
 import streamingcourse.week2.common.KJsonDeserializer;
 import streamingcourse.week2.common.KJsonSerializer;
+import streamingcourse.week2.mobileusage.model.MobileUsage;
 
 import java.util.HashMap;
 import java.util.Map;

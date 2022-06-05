@@ -1,5 +1,7 @@
 package streamingcourse.week2.mobileusage;
 
+import streamingcourse.week2.mobileusage.model.MobileUsage;
+
 import java.time.Instant;
 
 public class TotalMobileUsage implements Comparable<TotalMobileUsage> {

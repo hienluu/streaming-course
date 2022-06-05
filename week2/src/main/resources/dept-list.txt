@@ -1,0 +1,6 @@
+{"deptIt":101, "name":"IT", "quota": 5000000, "leader": "it@name.com"}
+{"deptIt":201, "name":"Engineering", "quota": 7000000, "leader": "engr@name.com"}
+{"deptIt":301, "name":"HR", "quota": 4000000, "leader": "hr@name.com"}
+{"deptIt":401, "name":"Finance", "quota": 3000000, "leader": "finance@name.com"}
+{"deptIt":501, "name":"Marketing", "quota": 8000000, "leader": "marketing@name.com"}
+{"deptIt":601, "name":"Procurement", "quota": 4200000, "leader": "procurement@name.com"}

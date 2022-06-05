@@ -17,6 +17,8 @@ import java.util.concurrent.Future;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import streamingcourse.week2.common.KJsonSerializer;
+import streamingcourse.week2.mobileusage.data.MobileUsageGenerator;
+import streamingcourse.week2.mobileusage.model.MobileUsage;
 
 import static streamingcourse.common.KafkaCommonProperties.*;
 
@@ -28,7 +30,7 @@ public class MobileUsageProducer {
 
     private static final String KEY_SERIALIZER = StringSerializer.class.getName();
     private static final String VALUE_SERIALIZER = KJsonSerializer.class.getName();
-    //private static final String VALUE_SERIALIZER = MobileUsageSerializer.class.getName();
+
 
     private static final int NUM_MSG_TO_SEND = 15;
     public static final String KAFKA_TOPIC_TO_SEND_TO = "streaming.week2.mobile_usage";
@@ -39,14 +41,14 @@ public class MobileUsageProducer {
         LOGGER.info(" =======================  MobileUsageProducer =========================");
         LOGGER.info("NUM_MSG_TO_SEND: " + NUM_MSG_TO_SEND);
         LOGGER.info("KAFKA_TOPIC_TO_SEND_TO: " + KAFKA_TOPIC_TO_SEND_TO);
-        LOGGER.info("VALUE_SERIALIZER: " + VALUE_SERIALIZER);
+        LOGGER.info("KEY_SERIALIZER: " + KEY_SERIALIZER);
         LOGGER.info("VALUE_SERIALIZER: " + VALUE_SERIALIZER);
         LOGGER.info(" =======================  MobileUsageProducer =========================");
 
 
         //Setup Properties for Kafka Producer
         Properties kafkaProps = new Properties();
-        kafkaProps.put(ProducerConfig.CLIENT_ID_CONFIG, "MobileUsageProducer");
+        kafkaProps.put(ProducerConfig.CLIENT_ID_CONFIG, MobileUsageProducer.class.getName());
         //List of brokers to connect to
         kafkaProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER_LIST);
         //Serializer class used to convert Keys to Byte Arrays

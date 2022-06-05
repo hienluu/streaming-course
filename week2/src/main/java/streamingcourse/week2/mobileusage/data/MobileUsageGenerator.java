@@ -1,17 +1,23 @@
-package streamingcourse.week2.mobileusage;
+package streamingcourse.week2.mobileusage.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.javafaker.Faker;
+import streamingcourse.week2.mobileusage.model.DeptInfo;
+import streamingcourse.week2.mobileusage.model.MobileUsage;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.IntStream;
 
+/**
+ * Generate random mobile usage data - leveraging Java Faker
+ * - https://github.com/DiUS/java-faker
+ */
 public class MobileUsageGenerator {
     private  List<String> userNameList;
-    private  Map<String, String> deptMap;
+    private  Map<String, DeptInfo> userNameToDeptMap;
     private Faker faker = new Faker();
     private Random userIdRandomGen = new Random();
     private Random deptRandomGen = new Random();
@@ -30,15 +36,17 @@ public class MobileUsageGenerator {
                 "onetimer", "skywalker", "theman",  "flyer", "hiker",
                 "theone", "gamer", "justdoit",  "whoami", "youareit");
 
-        List<String> deptList = Arrays.asList("it","engr","finance", "hr");
+        List<DeptInfo> deptInfoList =  DeptGenerator.getInstance().getDeptInfoList();
 
-        deptMap = new HashMap<>(userNameList.size());
-        // popular the deptMap
+        List<Integer> deptIdList = Arrays.asList(101, 105, 201, 205, 301, 305);
+
+        userNameToDeptMap = new HashMap<>(userNameList.size());
+        // popular the deptIdMap
         IntStream.range(0, userNameList.size()).forEach(idx -> {
-            deptMap.put(userNameList.get(idx), deptList.get(idx % deptList.size()));
+            String userName = userNameList.get(idx);
+            DeptInfo deptInfo = deptInfoList.get(idx % deptIdList.size());
+            userNameToDeptMap.put(userName, deptInfo);
         });
-
-
 
         clock = Instant.now().minus(numDaysInThePast, ChronoUnit.DAYS);
     }
@@ -48,7 +56,7 @@ public class MobileUsageGenerator {
 
         int randomUserIdx = userIdRandomGen.nextInt(userNameList.size());
         mobileUsage.userName = userNameList.get(randomUserIdx);
-        mobileUsage.dept = deptMap.get(mobileUsage.userName);
+        mobileUsage.deptId = userNameToDeptMap.get(mobileUsage.userName).getDeptIt();
         mobileUsage.bytesUsed = byteUsedRandomGen.nextInt(1000) + 35;
 
         // timeStamp is advancing from the clock at the minimum of 30 seconds

@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import streamingcourse.common.KafkaCommonProperties;
 
 import java.time.Duration;
 import java.util.*;
@@ -28,7 +29,7 @@ import static streamingcourse.common.KafkaCommonProperties.*;
  *
  */
 public class KafkaConsumerGroupTweetConsumer {
-    private static final String BOOTSTRAP_SERVER_LIST = "localhost:9092,localhost:9093,localhost:9094";
+    private static final String BOOTSTRAP_SERVER_LIST = KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
     private static final String KAFKA_TOPIC_TO_CONSUME_FROM = TWEETS_TOPIC_NAME;
     private static final String GROUP_ID = KafkaConsumerGroupTweetConsumer.class.getName();
 

@@ -4,8 +4,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.streams.processor.TimestampExtractor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.time.Instant;
+import streamingcourse.week2.mobileusage.model.MobileUsage;
 
 
 public class MobileUsageTimeExtractor implements TimestampExtractor {

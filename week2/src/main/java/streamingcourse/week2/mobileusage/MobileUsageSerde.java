@@ -7,12 +7,15 @@ import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serializer;
+import streamingcourse.week2.mobileusage.model.MobileUsage;
 
 import java.util.Map;
 
 /**
+ * @deprecated
  * Serdes for MobileUsage custom record type
  * @param <T>
+ *
  */
 public class MobileUsageSerde<T> implements Serializer<T>, Deserializer<T>, Serde<T> {
     private transient ObjectMapper objectMapper;
