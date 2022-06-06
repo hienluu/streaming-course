@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Logger;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
 
@@ -57,6 +59,12 @@ public class TopNUsers {
     public TopNUsers remove(UserTotalUsage oldUserTotalUsage) {
         boolean contains = top3MobileUsageSorted.remove(oldUserTotalUsage);
         return this;
+    }
+
+    public List<UserTotalUsage> getTopNUserList() {
+        List<UserTotalUsage> result = new ArrayList<>(topN);
+        top3MobileUsageSorted.stream().forEach( userTotalUsage -> result.add(userTotalUsage));
+        return result;
     }
 
     @JsonProperty("topNMobileUsage")

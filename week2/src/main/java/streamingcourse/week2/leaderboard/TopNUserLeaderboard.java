@@ -28,6 +28,7 @@ public class TopNUserLeaderboard {
     private static Logger log = LogManager.getLogger(TopNUserLeaderboard.class.getName());
 
     private static String MOBILE_USAGE_TOPIC_NAME = MobileUsageProducer.MOBILE_USAGE_TOPIC;
+        private static String LEADER_STATE_STORE_NAME = "topNUser-leader-board";
 
     public static void main(final String[] args) throws Exception {
         log.info("============== TopNUserLeaderboard.main ============= ");
@@ -98,7 +99,7 @@ public class TopNUserLeaderboard {
                 topNUsersAggregator,
                 // subtractor
                 topNUsersSubtractor,
-                Materialized.<String, TopNUsers, KeyValueStore <Bytes, byte[]>>as("topNUser-leader-board")
+                Materialized.<String, TopNUsers, KeyValueStore <Bytes, byte[]>>as(LEADER_STATE_STORE_NAME)
                         .withKeySerde(Serdes.String())
                         .withValueSerde(TopNUserSerdes.TopNUsers())
         );
@@ -115,6 +116,12 @@ public class TopNUserLeaderboard {
         log.info("topology: "  + topology.describe().toString());
         KafkaStreams streams = new KafkaStreams(topology, props);
 
+        StoreQueryServer queryServer = new StoreQueryServer(streams, LEADER_STATE_STORE_NAME, 7777);
+        streams.setStateListener((newState, oldState) -> {
+            log.info("State Changing to " + newState + " from " + oldState);
+            queryServer.setActive(newState == KafkaStreams.State.RUNNING && oldState == KafkaStreams.State.REBALANCING);
+        });
+
         // reset the Kafka Streams app. state
         log.info("Performing clean up");
         streams.cleanUp();
@@ -128,6 +135,7 @@ public class TopNUserLeaderboard {
                 log.info("Shutdown called..closing the streams");
                 streams.close();
                 streams.cleanUp();
+                queryServer.stop();
                 latch.countDown();
             }
         });
@@ -135,6 +143,7 @@ public class TopNUserLeaderboard {
         // Now run the processing topology via `start()` to begin processing its input data.
         log.info("Start running the topology");
         streams.start();
+        queryServer.start();
         latch.await();
 
     }
