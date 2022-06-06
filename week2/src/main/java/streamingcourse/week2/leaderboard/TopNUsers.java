@@ -33,6 +33,9 @@ public class TopNUsers {
         this.topN = n;
     }
     private final TreeSet<UserTotalUsage> top3MobileUsageSorted = new TreeSet<>((o1, o2) -> {
+        // tree uses the comparator to determine if two objects are the same
+        // when two UserTotalUsage instances for the same user, then we want to return 0
+        // to indicate they are the same
         if (Objects.equals(o1, o2)) {
             return 0;
         }
