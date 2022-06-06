@@ -22,8 +22,12 @@ import java.util.concurrent.CountDownLatch;
 import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
 
 
+/**
+ * Display the records from the streaming.week2.department topic
+ * - make sure to stop the app. after done seeing the records
+ */
 public class DepartmentInfoDisplay {
-    public static final String DEPARTMENT_TOPIC_NAME = DepartmentInfoProducer.KAFKA_TOPIC_TO_SEND_TO;
+    public static final String DEPARTMENT_TOPIC_NAME = DepartmentInfoProducer.DEPARTMENT_TOPIC_NAME;
 
     private static Logger log = LogManager.getLogger(DepartmentInfoDisplay.class.getName());
 

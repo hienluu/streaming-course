@@ -1,0 +1,8 @@
+# these instructions are for the UserDepartmentJoin example
+
+# make sure Kafka cluster is up and running
+
+# assuming the streaming.week2.department topic was already created and populated with records using the
+# DepartmentInfoProducer
+# you can display the records using the DepartmentInfoDisplay
+

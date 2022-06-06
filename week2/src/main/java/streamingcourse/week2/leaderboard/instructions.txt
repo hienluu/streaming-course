@@ -47,3 +47,6 @@ kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 \
 # copy a line from the copy you have with the player and update the bytesUsed so this player will be moved to sencd place
 # past the entire line (in JSON) to the producer console
 # observe the update in the output of TopNUserLeaderboard
+
+# point your browser to http://localhost:7777/all to see the top n users
+# feel free to refresh when you add more usage data via producer or MobileUsageProducer

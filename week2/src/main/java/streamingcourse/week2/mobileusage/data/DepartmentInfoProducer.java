@@ -22,13 +22,13 @@ public class DepartmentInfoProducer {
     private static final String KEY_SERIALIZER = IntegerSerializer.class.getName();
     private static final String VALUE_SERIALIZER = KJsonSerializer.class.getName();
 
-    public static final String KAFKA_TOPIC_TO_SEND_TO = "streaming.week2.department";
+    public static final String DEPARTMENT_TOPIC_NAME = "streaming.week2.department";
 
     private static final Logger LOGGER = LogManager.getLogger(DepartmentInfoProducer.class.getName());
     public static void main(String[] args) {
 
         LOGGER.info(" =======================" + DepartmentInfoProducer.class.getName() + " =========================");
-        LOGGER.info("KAFKA_TOPIC_TO_SEND_TO: " + KAFKA_TOPIC_TO_SEND_TO);
+        LOGGER.info("KAFKA_TOPIC_TO_SEND_TO: " + DEPARTMENT_TOPIC_NAME);
         LOGGER.info("KEY_SERIALIZER: " + KEY_SERIALIZER);
         LOGGER.info("VALUE_SERIALIZER: " + VALUE_SERIALIZER);
         LOGGER.info(" =======================" + DepartmentInfoProducer.class.getName() + " =========================");
@@ -55,7 +55,7 @@ public class DepartmentInfoProducer {
                 //Create a producer Record
                 ProducerRecord<Integer, DeptInfo> kafkaRecord =
                         new ProducerRecord<>(
-                                KAFKA_TOPIC_TO_SEND_TO,    //Topic name
+                                DEPARTMENT_TOPIC_NAME,    //Topic name
                                 deptInfo.deptIt,  deptInfo);
 
                 Future<RecordMetadata> response = simpleProducer.send(kafkaRecord);
