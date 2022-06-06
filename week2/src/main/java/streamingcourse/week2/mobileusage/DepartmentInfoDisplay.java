@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import streamingcourse.week2.mobileusage.data.DepartmentInfoProducer;
 import streamingcourse.week2.mobileusage.model.DeptInfo;
-import streamingcourse.week2.mobileusage.serdes.MobileUsageAppSerdes;
+import streamingcourse.week2.mobileusage.serdes.MobileUseCaseAppSerdes;
 
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
@@ -52,7 +52,7 @@ public class DepartmentInfoDisplay {
 
         StreamsBuilder builder = new StreamsBuilder();
 
-        Serde<DeptInfo> deptInfoSerde = MobileUsageAppSerdes.DepartmentInfo();
+        Serde<DeptInfo> deptInfoSerde = MobileUseCaseAppSerdes.DepartmentInfo();
         KStream<Integer, DeptInfo> deptInfoKStream = builder.stream(DEPARTMENT_TOPIC_NAME,
                 Consumed.with(Serdes.Integer(), deptInfoSerde)
         );

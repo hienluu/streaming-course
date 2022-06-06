@@ -26,7 +26,7 @@ import static streamingcourse.week2.PrintColorCode.ansiYellow;
 
 public class KafkaJsonConsumer {
      private static final String BOOTSTRAP_SERVER_LIST = KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
-    private static final String KAFKA_TOPIC_TO_CONSUME_FROM = MobileUsageProducer.KAFKA_TOPIC_TO_SEND_TO;
+    private static final String KAFKA_TOPIC_TO_CONSUME_FROM = MobileUsageProducer.MOBILE_USAGE_TOPIC;
     private static final String GROUP_ID = KafkaJsonConsumer.class.getName();
 
     private static Logger log = LogManager.getLogger(KafkaJsonConsumer.class.getName());

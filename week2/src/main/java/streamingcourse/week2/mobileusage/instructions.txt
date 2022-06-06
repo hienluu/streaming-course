@@ -49,3 +49,8 @@ kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 \
      --topic streaming.week2.mobile_usage \
      --property parse.key=true \
      --property key.separator=":"
+
+
+kafka-streams-application-reset.sh --force --application-id TopNUserLeaderboard-app \
+           --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 \
+           --input-topics streaming.week2.mobile_usage

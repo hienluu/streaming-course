@@ -11,7 +11,7 @@ import streamingcourse.week2.mobileusage.model.MobileUsage;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MobileUsageAppSerdes extends Serdes {
+public class MobileUseCaseAppSerdes extends Serdes {
     static final class MobileUsageSerde2 extends WrapperSerde<MobileUsage> {
         MobileUsageSerde2() {
             super(new KJsonSerializer<>(), new KJsonDeserializer<>());

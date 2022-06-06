@@ -1,7 +1,5 @@
 package streamingcourse.week2.mobileusage;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -14,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import streamingcourse.week2.mobileusage.data.MobileUsageProducer;
 import streamingcourse.week2.mobileusage.model.MobileUsage;
-import streamingcourse.week2.mobileusage.serdes.MobileUsageAppSerdes;
+import streamingcourse.week2.mobileusage.serdes.MobileUseCaseAppSerdes;
 
 import java.time.Duration;
 import java.util.Properties;
@@ -31,14 +29,14 @@ import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST
  *   https://peaku.co/questions/29703-kafkastreams:-obtencion-de-los-resultados-finales-de-la-ventana
  */
 public class MobileUsageDisplay {
-    public static final String MOBILE_USAGE_TOPIC_NAME = MobileUsageProducer.KAFKA_TOPIC_TO_SEND_TO;
+    public static final String MOBILE_USAGE_TOPIC_NAME = MobileUsageProducer.MOBILE_USAGE_TOPIC;
 
     private static Logger log = LogManager.getLogger(MobileUsageDisplay.class.getName());
 
     private static void displayMobileUsageRecords(KStream<String, MobileUsage> lineStream) {
         log.info("======== peeking ========");
 
-         lineStream.peek((key, value) -> log.info(String.format("%s:%s", key, value)));
+         lineStream.peek((key, value) -> System.out.printf(String.format("%s:%s\n", key, value)));
         //lineStream.print(Printed.<String, MobileUsage>toSysOut().withLabel("Mobile Usage"));
     }
 
@@ -59,7 +57,7 @@ public class MobileUsageDisplay {
         lineStream.groupByKey()
                 .aggregate(() -> 0.0,
                         (key,value, total) -> total + value.getBytesUsed(),
-                    Materialized.with(Serdes.String(), Serdes.Double()))
+                        Materialized.with(Serdes.String(), Serdes.Double()))
                 .toStream()
                 .print(Printed.<String,Double>toSysOut().withLabel("user usage"));
 
@@ -128,7 +126,7 @@ public class MobileUsageDisplay {
         StreamsBuilder builder = new StreamsBuilder();
 
         //MobileUsageSerde mobileUsageSerde = new MobileUsageSerde();
-        Serde<MobileUsage> mobileUsageSerde2 = MobileUsageAppSerdes.MobileUsage();
+        Serde<MobileUsage> mobileUsageSerde2 = MobileUseCaseAppSerdes.MobileUsage();
         KStream<String, MobileUsage> lineStream = builder.stream(MOBILE_USAGE_TOPIC_NAME,
                 Consumed.with(Serdes.String(), mobileUsageSerde2)
                 //Consumed.with(Serdes.String(), mobileUsageSerde)
@@ -136,10 +134,10 @@ public class MobileUsageDisplay {
                 );
 
 
-      //displayMobileUsageRecords(lineStream);
+      displayMobileUsageRecords(lineStream);
 
       //  displayCountByUser(lineStream);
-      displayCountByUserWithWindow(lineStream, TimeUnit.SECONDS.toSeconds(300));
+      //displayCountByUserWithWindow(lineStream, TimeUnit.SECONDS.toSeconds(300));
 
      //  displayTotalMobileUsageByUserUsingAggregate(lineStream);
 

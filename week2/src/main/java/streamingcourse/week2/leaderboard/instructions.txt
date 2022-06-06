@@ -1,0 +1,49 @@
+# ====================================================================================================
+# =================== Working with mobile usage leader board by user example related  ===================
+# ====================================================================================================
+
+# log into docker instance
+docker exec -it kafka-broker1 bash
+
+
+# Create a Kafka topic using command line to produce mobile usage in JSON format to streaming.week2.mobile_usage
+kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+                 --topic streaming.week2.mobile_usage \
+                 --partitions 3 \
+                 --replication-factor 2
+
+# describe the topic to make sure it exists and is correct
+kafka-topics.sh --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+    --describe -topic streaming.week2.mobile_usage
+
+# if you ever need to delete the topic
+kafka-topics.sh --delete --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094  --topic <topic name>
+
+# run MobileUsageProducer to produce some records, which are generated with random value.
+
+# run KafkaJsonConsumer display the mobile usage in JSO
+# copy the output to a text file to make it easier to examine later
+
+# run TopNUserLeaderboard
+
+# if need to run TopNUserLeaderboard the second time or afterward
+# reset the offset (WARNING: make sure to stop the running streaming application first)
+kafka-streams-application-reset.sh --force --application-id TopNUserLeaderboard-app \
+           --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 \
+           --input-topics streaming.week2.mobile_usage
+
+# =======================================================================
+# to inject mobile usage by hands to see the leader board update
+# =======================================================================
+
+# start the console producer to produce messages to topic streaming.week2.mobile_usage
+
+kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 \
+     --topic streaming.week2.mobile_usage \
+     --property parse.key=true \
+     --property key.separator=":"
+
+# looks at the last time in the output to identify the name of the last player in the leader board
+# copy a line from the copy you have with the player and update the bytesUsed so this player will be moved to sencd place
+# past the entire line (in JSON) to the producer console
+# observe the update in the output of TopNUserLeaderboard

@@ -32,14 +32,14 @@ public class MobileUsageProducer {
 
 
     private static final int NUM_MSG_TO_SEND = 15;
-    public static final String KAFKA_TOPIC_TO_SEND_TO = "streaming.week2.mobile_usage";
+    public static final String MOBILE_USAGE_TOPIC = "streaming.week2.mobile_usage";
 
     private static final Logger LOGGER = LogManager.getLogger(MobileUsageProducer.class.getName());
     public static void main(String[] args) {
 
         LOGGER.info(" =======================  MobileUsageProducer =========================");
         LOGGER.info("NUM_MSG_TO_SEND: " + NUM_MSG_TO_SEND);
-        LOGGER.info("KAFKA_TOPIC_TO_SEND_TO: " + KAFKA_TOPIC_TO_SEND_TO);
+        LOGGER.info("KAFKA_TOPIC_TO_SEND_TO: " + MOBILE_USAGE_TOPIC);
         LOGGER.info("KEY_SERIALIZER: " + KEY_SERIALIZER);
         LOGGER.info("VALUE_SERIALIZER: " + VALUE_SERIALIZER);
         LOGGER.info(" =======================  MobileUsageProducer =========================");
@@ -67,7 +67,7 @@ public class MobileUsageProducer {
                 //Create a producer Record
                 ProducerRecord<String, MobileUsage> kafkaRecord =
                         new ProducerRecord<String, MobileUsage>(
-                                KAFKA_TOPIC_TO_SEND_TO,    //Topic name
+                                MOBILE_USAGE_TOPIC,    //Topic name
                                 mobileUsage.userName,  mobileUsage);
 
                 Future<RecordMetadata> response = simpleProducer.send(kafkaRecord);
