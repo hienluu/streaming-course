@@ -1,0 +1,28 @@
+
+# retrieve the admin token
+docker exec influxdb influx auth list
+
+# docker exec -it influxdb influx bucket create streaming
+
+# resource
+- https://medium.com/geekculture/deploying-influxdb-2-0-using-docker-6334ced65b6c
+- https://github.com/influxdata/influxdb-client-java/tree/master/client#by-pojo
+
+
+# influxdb concepts
+# bucket - database
+# measurement - name of table -
+  - acts as a container for tags, fields, and the time column, and the measurement name is the description of the
+  - data that are stored in the associated fields
+# field
+  - Fields are a required piece of the InfluxDB data structure - you cannot have data in InfluxDB without fields.
+  - It’s also important to note that fields are not indexed
+
+# tags
+  - Tags are optional
+  - Tags are made up of tag keys and tag values
+  - Tags are index
+
+# A point represents a single data record that has four components: a measurement, tag set, field set, and a timestamp.
+  A point is uniquely identified by its series and timestamp.
+
