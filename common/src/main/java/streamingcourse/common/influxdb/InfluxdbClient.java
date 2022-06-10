@@ -1,21 +1,19 @@
 package streamingcourse.common.influxdb;
 
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
-import java.util.stream.IntStream;
 
-import com.github.javafaker.Faker;
 import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
+import com.influxdb.client.OrganizationsQuery;
 import com.influxdb.client.WriteApiBlocking;
+import com.influxdb.client.domain.Bucket;
+import com.influxdb.client.domain.Organization;
 import com.influxdb.client.domain.WritePrecision;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,8 +21,8 @@ import org.apache.logging.log4j.Logger;
 public class InfluxdbClient {
     private static Logger logger = LogManager.getLogger(InfluxdbClient.class);
 
-    private static String org;
-    private String bucket;
+    private static String orgName;
+    private String bucketName;
     private String host;
     private String token;
 
@@ -38,8 +36,8 @@ public class InfluxdbClient {
         init();
     }
     public InfluxdbClient(String bucket) {
+        this.bucketName = bucket;
         init();
-        this.bucket = bucket;
     }
 
     public void init() {
@@ -52,30 +50,56 @@ public class InfluxdbClient {
             prop.load(input);
 
             host = prop.getProperty("host");
-            org = prop.getProperty("org");
+            orgName = prop.getProperty("org");
             token = prop.getProperty("token");
-            bucket = prop.getProperty("bucket");
+            if (bucketName == null) {
+                bucketName = prop.getProperty("bucket");
+            } else {
+                logger.info("Not using default bucket name. Using the provided name: " + bucketName);
+            }
 
         } catch (Exception e) {
             throw new RuntimeException("Encountered error while reading influxdb.properties", e);
         }
 
+        try {
+            client = InfluxDBClientFactory.create(host, token.toCharArray());
 
-        client = InfluxDBClientFactory.create(host, token.toCharArray());
-        writeApi = client.getWriteApiBlocking();
+            Bucket bucket = client.getBucketsApi().findBucketByName(bucketName);
+            if (bucket == null) {
+                logger.info("Unable to find bucket: "+ bucketName + ".  Will create a new one with org: " + orgName);
+                OrganizationsQuery organizationsQuery = new OrganizationsQuery();
+                organizationsQuery.setOrg(orgName);
+
+                List<Organization> organizationList = client.getOrganizationsApi().findOrganizations(organizationsQuery);
+                if (organizationList != null) {
+                    Organization topOrg = organizationList.get(0);
+                    logger.info("org: " + topOrg);
+                    client.getBucketsApi().createBucket(bucketName, topOrg.getId());
+                    logger.info("Successfully created bucket: " + bucketName);
+                } else {
+                    throw  new RuntimeException("Unable to find org. with name: " + orgName);
+                }
+            }
+
+            writeApi = client.getWriteApiBlocking();
+        } catch (Exception e) {
+            throw new RuntimeException("Encountered error while initializing  InfluxDBClient", e);
+        }
+
     }
 
     public void printProperties() {
         logger.info(" ========== InfluxDB properties =====================");
         logger.info("host: " + host);
-        logger.info("org: " + org);
+        logger.info("org: " + orgName);
         logger.info("token: " + token);
-        logger.info("bucket: " + bucket);
+        logger.info("bucket: " + bucketName);
         logger.info(" ===================================================");
     }
 
     public void writeMeasurement(Object measurement) {
-        writeApi.writeMeasurement(bucket, org, WritePrecision.MS, measurement);
+        writeApi.writeMeasurement(bucketName, orgName, WritePrecision.MS, measurement);
     }
 
     public void close() {
@@ -87,9 +111,10 @@ public class InfluxdbClient {
     public static void main(final String[] args) {
         System.out.println("InfluxdbClient.main");
 
-        InfluxdbClient client = new InfluxdbClient();
+        InfluxdbClient client = new InfluxdbClient("test-bucket");
         client.printProperties();
 
+        /*
 
         Faker faker = new Faker(new Random());
 
@@ -125,6 +150,8 @@ public class InfluxdbClient {
             }
         }
 
+
+         */
         client.close();
         logger.info("====== done writing ======");
 
@@ -148,5 +175,8 @@ public class InfluxdbClient {
                     '}';
         }
     }
+
+
+
 }
 

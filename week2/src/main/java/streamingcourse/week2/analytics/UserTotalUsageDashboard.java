@@ -73,11 +73,13 @@ public class UserTotalUsageDashboard {
                 Consumed.with(Serdes.String(), mobileUsageSerde)
         );
 
+        // perform group by user and perform sum aggregation on the bytesUsed
         KTable<String, Long> totalUsageByUserTable = mobileUsageStream.groupByKey()
                 .aggregate(() -> 0L, (key, value, aggValue) -> aggValue += value.bytesUsed,
                         Materialized.with(Serdes.String(), Serdes.Long())
                 );
 
+        // iterate through each aggregation and send them to InfluxDB
         totalUsageByUserTable.toStream().foreach((key, value) -> {
             UseTotalMobileUsage usage = new UseTotalMobileUsage();
             usage.userName = key;
