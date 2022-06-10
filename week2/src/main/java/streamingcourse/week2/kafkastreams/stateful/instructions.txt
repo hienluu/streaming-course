@@ -63,18 +63,33 @@ kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 \
 docker exec -it kafka-broker1 bash
 
 # create mobile usage topic is not already created
-kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+docker exec -it kafka-broker1 kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
                  --topic streaming.week2.mobile_usage \
                  --partitions 3 \
                  --replication-factor 2
 
 # run MobileUsageProducer to produce some records, which are generated with random value.
 
-# run KafkaJsonConsumer display the mobile usage in JSO
+# run KafkaJsonConsumer display the mobile usage in the console
+
 # copy the output to a text file to make it easier to examine later
 
 # run the AverageUserUsedBytes application
 
+# if you made some changes and would like to process mobile usage from the beginning
+# execute the command line below to reset the offset for this app
 kafka-streams-application-reset.sh --force --application-id AverageUserUsedBytes-app \
            --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 \
            --input-topics streaming.week2.mobile_usage
+
+# to manually add more mobile usage using Kafka producer
+kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 \
+     --topic streaming.week2.mobile_usage \
+     --property parse.key=true \
+     --property key.separator=":"
+
+# then copy one of the mobile usage from the steps above and change the bytesUsed value
+# then paste it in the Kafka producer console.
+# The output console of AverageUserUsedBytes should display an output
+
+

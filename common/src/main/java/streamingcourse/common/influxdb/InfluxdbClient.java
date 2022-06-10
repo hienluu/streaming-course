@@ -1,6 +1,9 @@
 package streamingcourse.common.influxdb;
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
@@ -12,7 +15,6 @@ import com.influxdb.annotations.Column;
 import com.influxdb.annotations.Measurement;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
-import com.influxdb.client.WriteApi;
 import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import org.apache.logging.log4j.LogManager;
@@ -21,24 +23,74 @@ import org.apache.logging.log4j.Logger;
 public class InfluxdbClient {
     private static Logger logger = LogManager.getLogger(InfluxdbClient.class);
 
+    private static String org;
+    private String bucket;
+    private String host;
+    private String token;
+
+    private InfluxDBClient client;
+    private WriteApiBlocking writeApi;
+
+    /**
+     * Using default bucket
+     */
+    public InfluxdbClient() {
+        init();
+    }
+    public InfluxdbClient(String bucket) {
+        init();
+        this.bucket = bucket;
+    }
+
+    public void init() {
+
+        try (InputStream input = new FileInputStream("common/src/main/resources/influxdb.properties")) {
+
+            Properties prop = new Properties();
+
+            // load a properties file
+            prop.load(input);
+
+            host = prop.getProperty("host");
+            org = prop.getProperty("org");
+            token = prop.getProperty("token");
+            bucket = prop.getProperty("bucket");
+
+        } catch (Exception e) {
+            throw new RuntimeException("Encountered error while reading influxdb.properties", e);
+        }
+
+
+        client = InfluxDBClientFactory.create(host, token.toCharArray());
+        writeApi = client.getWriteApiBlocking();
+    }
+
+    public void printProperties() {
+        logger.info(" ========== InfluxDB properties =====================");
+        logger.info("host: " + host);
+        logger.info("org: " + org);
+        logger.info("token: " + token);
+        logger.info("bucket: " + bucket);
+        logger.info(" ===================================================");
+    }
+
+    public void writeMeasurement(Object measurement) {
+        writeApi.writeMeasurement(bucket, org, WritePrecision.MS, measurement);
+    }
+
+    public void close() {
+        logger.info("closing InfluxDBClient");
+        client.close();
+    }
+
+
     public static void main(final String[] args) {
         System.out.println("InfluxdbClient.main");
 
-        // You can generate an API token from the "API Tokens Tab" in the UI
-        String token = "y3R9cibtG5fyu4qpL0L_0b8AUB8hmITQRoDGUfba4HeodJeKwEJckkdlHf9tqJqPN80DeIGFc5a-3nJG9OjXZA==";
-        String bucket = "top-level";
-        String org = "streaming";
-        String host = "http://localhost:8086";
+        InfluxdbClient client = new InfluxdbClient();
+        client.printProperties();
 
-        logger.info("=========== " + InfluxdbClient.class.getName() + " ===========");
-        logger.info("bucket: " + bucket);
-        logger.info("org: " + org);
-        logger.info("host: " + host);
-        logger.info(" ===================================================");
 
-        InfluxDBClient client = InfluxDBClientFactory.create(host, token.toCharArray());
-
-        WriteApiBlocking writeApi = client.getWriteApiBlocking();
         Faker faker = new Faker(new Random());
 
         Random userRandom = new Random();
@@ -65,7 +117,7 @@ public class InfluxdbClient {
             startClock = nextClock;
 
             logger.info("====== writing: " + idx +  ": " + userMobileUsage.toString());
-            writeApi.writeMeasurement(bucket, org, WritePrecision.MS, userMobileUsage);
+            client.writeMeasurement(userMobileUsage);
             try {
                 Thread.sleep(2000);
             } catch (Exception e) {

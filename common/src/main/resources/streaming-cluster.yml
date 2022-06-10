@@ -57,6 +57,7 @@ services:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
       - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CREATE_TOPICS="streaming.week2.mobile_usage:3:2"
     container_name: kafka-broker3
     depends_on:
       - "zookeeper"
@@ -77,3 +78,17 @@ services:
       - "kafka1"
       - "kafka2"
       - "kafka3"
+
+  influxdb:
+    image: influxdb:2.2
+    ports:
+      - '8086:8086'
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=password
+      - DOCKER_INFLUXDB_INIT_ORG=streaming
+      - DOCKER_INFLUXDB_INIT_BUCKET=top-level
+    container_name: influxdb
+    depends_on:
+      - "kafdrop"
