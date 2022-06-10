@@ -10,6 +10,9 @@
 # list the kafka broker containers
   docker ps | grep kafka
 
+# using filter option
+docker container ls --filter "name=kafkadrop"
+
 # To view the Kafka UI
   - when running locally on your laptop
     point your browser to http://localhost:9000

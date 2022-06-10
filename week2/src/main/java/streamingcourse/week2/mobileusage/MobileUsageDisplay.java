@@ -65,12 +65,7 @@ public class MobileUsageDisplay {
        // );
     }
 
-    private static void displayMobileUsageLeaderboard(KStream<String, MobileUsage> lineStream) {
-        Initializer<TopMobileUsage> highScoresInitializer = TopMobileUsage::new;
 
-        Aggregator<String, TotalMobileUsage, TopMobileUsage> highScoresAdder =
-                (key, value, aggregate) -> aggregate.add(value);
-    }
 
 
     private static void displayCountByUserWithWindow(KStream<String, MobileUsage> lineStream, long windowSizeInSecond) {

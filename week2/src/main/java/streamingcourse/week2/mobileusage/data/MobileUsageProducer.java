@@ -31,7 +31,7 @@ public class MobileUsageProducer {
     private static final String VALUE_SERIALIZER = KJsonSerializer.class.getName();
 
 
-    private static final int NUM_MSG_TO_SEND = 15;
+    private static final int NUM_MSG_TO_SEND = 25;
     public static final String MOBILE_USAGE_TOPIC = "streaming.week2.mobile_usage";
 
     private static final Logger LOGGER = LogManager.getLogger(MobileUsageProducer.class.getName());

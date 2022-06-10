@@ -54,3 +54,27 @@ kafka-streams-application-reset.sh --application-id kstreams-wordcount-app \
 # type the command below and once the prompt is ready,  enter a few words and hit enter key
 kafka-console-producer.sh --broker-list kafka1:29092,kafka2:29093,kafka3:29094 \
      --topic week2-wordcount-input
+
+# =====================================================================
+# ====== calculating the average used bytes per user =================
+# =====================================================================
+
+# log into the broker 1
+docker exec -it kafka-broker1 bash
+
+# create mobile usage topic is not already created
+kafka-topics.sh --create --bootstrap-server kafka1:29092,kafka2:29093,kafka3:29094 \
+                 --topic streaming.week2.mobile_usage \
+                 --partitions 3 \
+                 --replication-factor 2
+
+# run MobileUsageProducer to produce some records, which are generated with random value.
+
+# run KafkaJsonConsumer display the mobile usage in JSO
+# copy the output to a text file to make it easier to examine later
+
+# run the AverageUserUsedBytes application
+
+kafka-streams-application-reset.sh --force --application-id AverageUserUsedBytes-app \
+           --bootstrap-servers kafka1:29092,kafka2:29093,kafka3:29094 \
+           --input-topics streaming.week2.mobile_usage
