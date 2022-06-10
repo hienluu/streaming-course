@@ -10,6 +10,7 @@ import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import streamingcourse.week2.common.MobileUsageCommonProperties;
 import streamingcourse.week2.mobileusage.data.DepartmentInfoProducer;
 import streamingcourse.week2.mobileusage.data.MobileUsageProducer;
 import streamingcourse.week2.mobileusage.model.DeptInfo;
@@ -33,7 +34,7 @@ import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST
 public class UserDepartmentJoin {
     private static Logger log = LogManager.getLogger(UserDepartmentJoin.class.getName());
 
-    private static String MOBILE_USAGE_TOPIC_NAME = MobileUsageProducer.MOBILE_USAGE_TOPIC;
+    private static String MOBILE_USAGE_TOPIC_NAME = MobileUsageCommonProperties.MOBILE_USAGE_TOPIC;
     private static String DEPARTMENT_INFO_TOPIC_NAME = DepartmentInfoProducer.DEPARTMENT_TOPIC_NAME;
 
     public static void main(final String[] args) throws Exception {

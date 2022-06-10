@@ -13,6 +13,7 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import streamingcourse.week2.common.MobileUsageCommonProperties;
 import streamingcourse.week2.mobileusage.data.MobileUsageProducer;
 import streamingcourse.week2.mobileusage.model.MobileUsage;
 import streamingcourse.week2.mobileusage.serdes.MobileUseCaseAppSerdes;
@@ -29,7 +30,7 @@ import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST
 public class AverageUserUsedBytes {
     private static Logger log = LogManager.getLogger(AverageUserUsedBytes.class.getName());
 
-    private static String MOBILE_USAGE_TOPIC_NAME = MobileUsageProducer.MOBILE_USAGE_TOPIC;
+    private static String MOBILE_USAGE_TOPIC_NAME = MobileUsageCommonProperties.MOBILE_USAGE_TOPIC;
 
 
     public static void main(final String[] args) throws Exception {

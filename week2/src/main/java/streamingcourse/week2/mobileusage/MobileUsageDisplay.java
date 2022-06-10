@@ -10,6 +10,7 @@ import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import streamingcourse.week2.common.MobileUsageCommonProperties;
 import streamingcourse.week2.mobileusage.data.MobileUsageProducer;
 import streamingcourse.week2.mobileusage.model.MobileUsage;
 import streamingcourse.week2.mobileusage.serdes.MobileUseCaseAppSerdes;
@@ -29,7 +30,7 @@ import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST
  *   https://peaku.co/questions/29703-kafkastreams:-obtencion-de-los-resultados-finales-de-la-ventana
  */
 public class MobileUsageDisplay {
-    public static final String MOBILE_USAGE_TOPIC_NAME = MobileUsageProducer.MOBILE_USAGE_TOPIC;
+    public static final String MOBILE_USAGE_TOPIC_NAME = MobileUsageCommonProperties.MOBILE_USAGE_TOPIC;
 
     private static Logger log = LogManager.getLogger(MobileUsageDisplay.class.getName());
 

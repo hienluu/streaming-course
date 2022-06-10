@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import streamingcourse.common.influxdb.InfluxdbClient;
+import streamingcourse.week2.common.MobileUsageCommonProperties;
 import streamingcourse.week2.kafkastreams.stateful.AverageUserUsedBytesSerdes;
 import streamingcourse.week2.mobileusage.data.MobileUsageProducer;
 import streamingcourse.week2.mobileusage.model.MobileUsage;
@@ -35,7 +36,7 @@ import static streamingcourse.common.KafkaCommonProperties.BOOTSTRAP_SERVER_LIST
 public class UserTotalUsageDashboard {
     private static Logger log = LogManager.getLogger(UserTotalUsageDashboard.class.getName());
 
-    private static String MOBILE_USAGE_TOPIC_NAME = MobileUsageProducer.MOBILE_USAGE_TOPIC;
+    private static String MOBILE_USAGE_TOPIC_NAME = MobileUsageCommonProperties.MOBILE_USAGE_TOPIC;
 
 
     public static void main(final String[] args) throws Exception {

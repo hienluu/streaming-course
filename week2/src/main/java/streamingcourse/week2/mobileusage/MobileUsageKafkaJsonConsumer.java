@@ -10,10 +10,10 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import streamingcourse.common.KafkaCommonProperties;
+import streamingcourse.week2.common.MobileUsageCommonProperties;
 import streamingcourse.week2.common.MyJsonSerializer;
 import streamingcourse.week2.kafkamessaging.KafkaSimpleTweetConsumer;
 import streamingcourse.week2.kafkamessaging.MobileUsageDeserializer;
-import streamingcourse.week2.mobileusage.data.MobileUsageProducer;
 import streamingcourse.week2.mobileusage.model.MobileUsage;
 
 import java.time.Duration;
@@ -24,12 +24,12 @@ import java.util.Set;
 import static streamingcourse.week2.PrintColorCode.ansiGreen;
 import static streamingcourse.week2.PrintColorCode.ansiYellow;
 
-public class KafkaJsonConsumer {
+public class MobileUsageKafkaJsonConsumer {
      private static final String BOOTSTRAP_SERVER_LIST = KafkaCommonProperties.BOOTSTRAP_SERVER_LIST;
-    private static final String KAFKA_TOPIC_TO_CONSUME_FROM = MobileUsageProducer.MOBILE_USAGE_TOPIC;
-    private static final String GROUP_ID = KafkaJsonConsumer.class.getName();
+    private static final String KAFKA_TOPIC_TO_CONSUME_FROM = MobileUsageCommonProperties.MOBILE_USAGE_TOPIC;
+    private static final String GROUP_ID = MobileUsageKafkaJsonConsumer.class.getName();
 
-    private static Logger log = LogManager.getLogger(KafkaJsonConsumer.class.getName());
+    private static Logger log = LogManager.getLogger(MobileUsageKafkaJsonConsumer.class.getName());
 
     public static void main(String[] args) {
         System.out.println(KafkaSimpleTweetConsumer.class.getName());

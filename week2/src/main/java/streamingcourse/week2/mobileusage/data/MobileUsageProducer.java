@@ -17,6 +17,7 @@ import java.util.concurrent.Future;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import streamingcourse.week2.common.KJsonSerializer;
+import streamingcourse.week2.common.MobileUsageCommonProperties;
 import streamingcourse.week2.mobileusage.model.MobileUsage;
 
 import static streamingcourse.common.KafkaCommonProperties.*;
@@ -32,7 +33,7 @@ public class MobileUsageProducer {
 
 
     private static final int NUM_MSG_TO_SEND = 25;
-    public static final String MOBILE_USAGE_TOPIC = "streaming.week2.mobile_usage";
+    private static final String MOBILE_USAGE_TOPIC = MobileUsageCommonProperties.MOBILE_USAGE_TOPIC;
 
     private static final Logger LOGGER = LogManager.getLogger(MobileUsageProducer.class.getName());
     public static void main(String[] args) {
@@ -90,35 +91,4 @@ public class MobileUsageProducer {
                 rm.topic(), rm.partition(), rm.offset(), rm.timestamp(), rm.serializedKeySize(), rm.serializedValueSize());
     }
 
-    private static void gsonQuickTest() {
-        MobileUsage mobileUsage = new MobileUsage();
-        mobileUsage.userName = "jb";
-        mobileUsage.bytesUsed = 25;
-        mobileUsage.timeStamp = Instant.now();
-
-        System.out.println("mobileUsage: " + mobileUsage.toString());
-
-        ObjectMapper objectMapper = JsonMapper.builder().build();
-
-        objectMapper.findAndRegisterModules();
-
-        try {
-
-            // Getting organisation object as a json string
-            String jsonStr = objectMapper.writeValueAsString(mobileUsage);
-
-            // Displaying JSON String on console
-            System.out.println(jsonStr);
-
-            MobileUsage fromJson = objectMapper.readValue(jsonStr, MobileUsage.class);
-            System.out.println("fromJson: " + fromJson.toString());
-
-            String jsonStr2 = objectMapper.writeValueAsString(fromJson);
-
-            // Displaying JSON String on console
-            System.out.println(jsonStr2);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
 }
